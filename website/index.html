@@ -600,8 +600,6 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
   </div>
 </footer>
 
-<!-- Copied from data/role_based.txt and data/consumer_domains.txt. Update together. -->
-<script type="application/json" id="lists">{"role":["support","help","service","info","contact","hello","admin","administrator","manager","office","sales","business","deals","marketing","press","media","hr","jobs","careers","abuse","security","compliance","privacy","legal","dmca","fraud","trust","billing","accounts","accounting","finance","payments","invoices","monitoring","uptime","status","health","heartbeat","cron","scheduler","workers","ux","ui","design","designers","research","usability","productops","roadmap","discovery","relations","stakeholders","investors","ir","shareholders","pr","publicaffairs","government","policy","seo","content","copy","brand","branding","social","socialmedia","influencers","affiliates","campaigns","promotions","internal","intranet","backoffice","operations","enablement","facilities","workplace","customersuccess","cs","cx","onboarding","implementations","adoption","feedback","reviews","voice","experience","revenue","growth","monetization","subscriptions","pricing","plans","upsell","renewals","retention","churn","contracts","licensing","copyright","ip","intellectualproperty","governance","ethics","whistleblower","ombudsman","data","datascience","ml","ai","analytics","insights","bi","lab","labs","experiments","platform","backend","frontend","mobile","ios","android","qa","quality","testing","release","build","ci","cd","devops","sre","reliability","cloud","kubernetes","k8s","containers","soc","cert","incident","vuln","vulnerabilities","bugbounty","bugs","risk","assurance","forensics","payroll","tax","it","tech","engineering","dev","developer","developers","ops","sysadmin","adminteam","infrastructure","orders","order","shipping","returns","logistics","warehouse","fulfillment","product","products","newsletter","news","announcements","updates","alerts","notifications","broadcast","community","events","ceo","cto","cfo","coo","founder","founders","leadership","management","board","directors","training","learning","education","academy","students","admissions","courses","noreply","no-reply","do-not-reply","donotreply","automated","system","systems","mailer","mail","robot","bot","partners","partnerships","alliances","vendors","suppliers","procurement","sourcing","team","staff","everyone","all","group","hq","global","postmaster","hostmaster","webmaster","root","tickets","chief","executive","exec","lead","head","chairman","chair","president","vp","svp","evp","ar","ap","receivables","collections","treasury","controller","bookkeeping","bookkeeper","legalteam","lawyer","counsel","dataprotection","dpo","gdpr","riskteam","regulatory","compliance-team","eng","engineers","devteam","backend-team","frontend-team","mobile-team","platform-team","infra","infra-team","qatest","qa-team","testers","release-team","staging","preprod","sandbox","data-team","analytics-team","ml-team","ai-team","research-team","science","experimentation","salesops","revops","commerce","ecommerce","store","shop","purchases","purchase","users","user","members","membership","accounts-team","support-team","helpdesk","servicedesk","demand","demandgen","performance","paid","ads","advertising","growth-team","marketingops","product-team","pm","pms","productmanager","product-owner","ux-team","ui-team","design-team","people","peopleops","culture","talent","talentops","hr-team","workforce","auto","autobot","notifications-team","events-team","dispatch","queue","pipeline","dns","abuse-team","noc","network","netops","beta","earlyaccess","preview","labs-team","innovation","future","api","webhook","webhooks","receipt","receipts","invoice","confirmation","confirmations","subscribe","unsubscribe","verify","verification","activate","activation","bounce","bounces","mailer-daemon","maildaemon","daemon","ping","replies","reply","hi","hey","general","enquiries","enquiry","queries","query","request","requests"],"consumer":["gmail.com","googlemail.com","outlook.com","outlook.co.uk","outlook.fr","outlook.de","outlook.com.au","live.com","live.co.uk","live.fr","live.com.au","hotmail.com","hotmail.co.uk","hotmail.fr","hotmail.de","msn.com","icloud.com","me.com","mac.com","yahoo.com","yahoo.co.uk","yahoo.co.in","yahoo.fr","yahoo.de","yahoo.com.au","yahoo.com.ar","yahoo.com.br","yahoo.com.mx","yahoo.es","yahoo.it","yahoo.ca","ymail.com","rocketmail.com","proton.me","protonmail.com","pm.me","protonmail.ch","tuta.com","tuta.io","tutanota.com","tutanota.de","tutamail.com","keemail.me","fastmail.com","fastmail.fm","fastmail.to","fastmail.net","fastmail.org","fastmail.in","fastmail.us","fastmail.cn","fastmail.es","fastmail.de","fastmail.jp","zoho.com","zohomail.com","yandex.com","yandex.ru","yandex.ua","yandex.by","yandex.kz","ya.ru","gmx.com","gmx.de","gmx.net","gmx.at","gmx.ch","gmx.fr","gmx.us","gmx.co.uk","mail.com","inbox.com","email.com","usa.com","myself.com","consultant.com","post.com","techie.com","writeme.com","aol.com","aim.com","verizon.net","att.net","sbcglobal.net","bellsouth.net","cox.net","charter.net","comcast.net","optonline.net","earthlink.net","mailbox.org","posteo.de","disroot.org","riseup.net","startmail.com","mailfence.com","hey.com","ik.me","privaterelay.appleid.com"]}</script>
 <script>
 (() => {
   'use strict';
@@ -733,9 +731,27 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
       return (LOCAL_RE.test(local) || QUOTED_LOCAL_RE.test(local)) && DOMAIN_RE.test(domain);
     };
 
-    const toSet = list => new Set(list.map(l => l.trim().toLowerCase()).filter(l => l && !l.startsWith('#')));
-    const lists = JSON.parse(document.getElementById('lists').textContent);
-    const ROLE_SET = toSet(lists.role), CONSUMER = toSet(lists.consumer);
+    // Domain lists come straight from the repo's data/ folder, the same files the npm package ships
+    const DATA = 'SaiAkashNeela/checkemail-dev@main/data/';
+    const sources = file => [
+      `https://raw.githubusercontent.com/${DATA.replace('@', '/')}${file}`,
+      `https://cdn.jsdelivr.net/gh/${DATA}${file}`,
+    ];
+    const toSet = text => new Set(text.split('\n').map(l => l.trim().toLowerCase()).filter(l => l && !l.startsWith('#')));
+    async function loadList(file) {
+      for (const url of sources(file)) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) return toSet(await res.text());
+        } catch {}
+      }
+      throw new Error(`Could not load data/${file}`);
+    }
+    let ROLE_SET = new Set(), CONSUMER = new Set();
+    let lists = null;
+    const loadLists = () => lists || (lists = Promise.all(['disposable.txt', 'role_based.txt', 'consumer_domains.txt'].map(loadList))
+      .then(([disposable, role, consumer]) => { ROLE_SET = role; CONSUMER = consumer; return disposable; })
+      .catch(err => { lists = null; throw err; }));
     const GMAIL = new Set(['gmail.com', 'googlemail.com']);
     const PROTON = new Set(['proton.me', 'protonmail.com', 'pm.me', 'protonmail.ch']);
     const MS = new Set(['outlook.com', 'live.com', 'hotmail.com', 'msn.com']);
@@ -744,25 +760,6 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
     const FASTMAIL = new Set(['fastmail.com', 'fastmail.fm']);
     const ZOHO = new Set(['zoho.com', 'zohomail.com']);
     const YANDEX = new Set(['yandex.com', 'yandex.ru', 'yandex.ua']);
-
-    // The published package's own list first; the upstream community list if npm is unreachable
-    const DISPOSABLE_SOURCES = [
-      'https://cdn.jsdelivr.net/npm/checkemail/data/disposable.txt',
-      'https://cdn.jsdelivr.net/gh/disposable-email-domains/disposable-email-domains@main/disposable_email_blocklist.conf',
-    ];
-    let disposable = null;
-    const loadDisposable = () => disposable || (disposable = (async () => {
-      for (const url of DISPOSABLE_SOURCES) {
-        try {
-          const res = await fetch(url);
-          if (!res.ok) continue;
-          const set = toSet((await res.text()).split('\n'));
-          if (set.size > 1000) return set;
-        } catch {}
-      }
-      disposable = null;
-      throw new Error('Could not load the disposable domain list');
-    })());
 
     const DOH = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/resolve'];
     const cache = new Map();
@@ -878,7 +875,7 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
     });
 
     async function validate(raw) {
-      const listP = loadDisposable();
+      const listP = loadLists();
       const start = performance.now();
       const email = raw.trim().replace(/ /g, '+').toLowerCase();
       if (!checkSyntax(email)) return early(email, start, false);
@@ -907,7 +904,7 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
         records: { a: a.a, cname: a.cname, mx: mx.mx },
       };
     }
-    return { validate, warm: () => loadDisposable().catch(() => {}) };
+    return { validate, warm: () => loadLists().catch(() => {}) };
   })();
 
   /* Engine selection:
