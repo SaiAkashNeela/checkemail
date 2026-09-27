@@ -3,7 +3,7 @@
 > Free, open-source (MIT) email validation engine by Sai Akash Neela (@saiakashneela). Syntax, DNS and MX checks, disposable detection, role detection, alias canonicalization, provider fingerprinting and a 0-100 confidence score, with zero runtime dependencies.
 
 Website: https://checkemail.dev/
-Source: https://github.com/SaiAkashNeela/checkemail-dev
+Source: https://github.com/SaiAkashNeela/checkemail
 npm: https://www.npmjs.com/package/checkemail
 Docker Hub: https://hub.docker.com/r/saiakashneela/checkemail
 License: MIT
@@ -161,8 +161,8 @@ print(r.json()['confidence']['status'])
 checkemail.dev is a single static HTML file. Its live demo runs the same checks in the visitor's browser and resolves DNS over HTTPS through Cloudflare's 1.1.1.1 (Google DNS as fallback). Only the domain is queried; nothing is stored. Host it free on Cloudflare Pages or any static host:
 
 ```bash
-git clone https://github.com/SaiAkashNeela/checkemail-dev
-cd checkemail-dev
+git clone https://github.com/SaiAkashNeela/checkemail
+cd checkemail
 npx wrangler pages deploy website --project-name checkemail
 ```
 

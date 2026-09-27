@@ -73,7 +73,7 @@
       "downloadUrl": "https://www.npmjs.com/package/checkemail",
       "installUrl": "https://www.npmjs.com/package/checkemail",
       "sameAs": [
-        "https://github.com/SaiAkashNeela/checkemail-dev",
+        "https://github.com/SaiAkashNeela/checkemail",
         "https://www.npmjs.com/package/checkemail",
         "https://hub.docker.com/r/saiakashneela/checkemail"
       ],
@@ -93,7 +93,7 @@
       "@type": "SoftwareSourceCode",
       "@id": "https://checkemail.dev/#source",
       "name": "checkemail",
-      "codeRepository": "https://github.com/SaiAkashNeela/checkemail-dev",
+      "codeRepository": "https://github.com/SaiAkashNeela/checkemail",
       "programmingLanguage": "TypeScript",
       "runtimePlatform": ["Node.js", "Bun", "Docker", "Web browser"],
       "license": "https://opensource.org/licenses/MIT",
@@ -401,10 +401,10 @@ footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
       <li><a href="#features">Features</a></li>
       <li><a href="#docker">Docker API</a></li>
       <li><a href="#edge">Cloudflare / Edge Deploy</a></li>
-      <li><a href="https://github.com/SaiAkashNeela/checkemail-dev#readme">Docs</a></li>
+      <li><a href="https://github.com/SaiAkashNeela/checkemail#readme">Docs</a></li>
     </ul>
     <div class="nav-end">
-      <a class="star" href="https://github.com/SaiAkashNeela/checkemail-dev" aria-label="Star checkemail on GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i>Star<span class="star-count" id="stars"></span></a>
+      <a class="star" href="https://github.com/SaiAkashNeela/checkemail" aria-label="Star checkemail on GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i>Star<span class="star-count" id="stars"></span></a>
       <a class="icon-btn npm-link" href="https://www.npmjs.com/package/checkemail" aria-label="checkemail on npm"><span class="brand-mark bm-npm" aria-hidden="true"></span></a>
       <button class="icon-btn" id="theme" type="button" aria-label="Toggle color theme"><i class="ph ph-moon" aria-hidden="true"></i></button>
       <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><i class="ph ph-list" aria-hidden="true"></i></button>
@@ -424,7 +424,7 @@ footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
           <p class="alt">Not using Node.js? <a href="#docker">Run it with Docker</a></p>
         </div>
         <div class="hero-actions rise" style="--d:4">
-          <a class="btn btn-ghost" href="https://github.com/SaiAkashNeela/checkemail-dev"><i class="ph ph-github-logo" aria-hidden="true"></i>View on GitHub</a>
+          <a class="btn btn-ghost" href="https://github.com/SaiAkashNeela/checkemail"><i class="ph ph-github-logo" aria-hidden="true"></i>View on GitHub</a>
         </div>
       </div>
 
@@ -545,8 +545,8 @@ System.out.println(response.body());</code></pre>
 
         <div role="tabpanel" id="p-pages" aria-labelledby="t-pages" hidden>
           <div class="panel-bar"><span>terminal</span><button class="copy" type="button" data-copy-from="c-deploy" aria-label="Copy commands"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
-<pre class="code"><code id="c-deploy" data-lang="sh">git clone https://github.com/SaiAkashNeela/checkemail-dev
-cd checkemail-dev
+<pre class="code"><code id="c-deploy" data-lang="sh">git clone https://github.com/SaiAkashNeela/checkemail
+cd checkemail
 npx wrangler pages deploy website --project-name checkemail</code></pre>
           <p class="note">The site is plain static files, so it runs free on Cloudflare Pages or any static host. The demo runs checkemail's checks in the visitor's browser and resolves DNS over HTTPS through 1.1.1.1. There is no server to run.</p>
         </div>
@@ -582,10 +582,10 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
       <div>
         <h4>Project</h4>
         <ul>
-          <li><a href="https://github.com/SaiAkashNeela/checkemail-dev"><i class="ph ph-github-logo" aria-hidden="true"></i>GitHub repository</a></li>
+          <li><a href="https://github.com/SaiAkashNeela/checkemail"><i class="ph ph-github-logo" aria-hidden="true"></i>GitHub repository</a></li>
           <li><a href="https://www.npmjs.com/package/checkemail"><span class="brand-mark bm-npm" aria-hidden="true"></span>npm registry</a></li>
           <li><a href="https://hub.docker.com/r/saiakashneela/checkemail"><span class="brand-mark bm-docker" aria-hidden="true"></span>Docker Hub</a></li>
-          <li><a href="https://github.com/SaiAkashNeela/checkemail-dev/issues"><i class="ph ph-bug" aria-hidden="true"></i>Issue tracker</a></li>
+          <li><a href="https://github.com/SaiAkashNeela/checkemail/issues"><i class="ph ph-bug" aria-hidden="true"></i>Issue tracker</a></li>
         </ul>
       </div>
       <div>
@@ -707,10 +707,10 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
   }
 
   /* ---------- GitHub stars (hidden if the API is unavailable) ---------- */
-  fetch('https://api.github.com/repos/SaiAkashNeela/checkemail-dev', { headers: { accept: 'application/vnd.github+json' } })
+  fetch('https://api.github.com/repos/SaiAkashNeela/checkemail', { headers: { accept: 'application/vnd.github+json' } })
     .then(r => r.ok ? r.json() : null)
     .then(d => {
-      if (!d || typeof d.stargazers_count !== 'number') return;
+      if (!d || typeof d.stargazers_count !== 'number' || d.stargazers_count < 1) return;
       const n = d.stargazers_count;
       $('#stars').textContent = n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
     })
@@ -732,7 +732,7 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
     };
 
     // Domain lists come straight from the repo's data/ folder, the same files the npm package ships
-    const DATA = 'SaiAkashNeela/checkemail-dev@main/data/';
+    const DATA = 'SaiAkashNeela/checkemail@main/data/';
     const sources = file => [
       `https://raw.githubusercontent.com/${DATA.replace('@', '/')}${file}`,
       `https://cdn.jsdelivr.net/gh/${DATA}${file}`,

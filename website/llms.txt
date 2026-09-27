@@ -14,16 +14,16 @@ Key facts:
 ## Docs
 
 - [Full documentation for LLMs](https://checkemail.dev/llms-full.txt): install, API, response fields, statuses, scoring, providers, Docker, browser use, FAQ
-- [README](https://github.com/SaiAkashNeela/checkemail-dev#readme): usage and response reference
+- [README](https://github.com/SaiAkashNeela/checkemail#readme): usage and response reference
 - [Live demo](https://checkemail.dev/#demo): validate any address in the browser
 
 ## Packages
 
 - [npm: checkemail](https://www.npmjs.com/package/checkemail)
 - [Docker Hub: saiakashneela/checkemail](https://hub.docker.com/r/saiakashneela/checkemail)
-- [GitHub: SaiAkashNeela/checkemail-dev](https://github.com/SaiAkashNeela/checkemail-dev)
+- [GitHub: SaiAkashNeela/checkemail](https://github.com/SaiAkashNeela/checkemail)
 
 ## Optional
 
-- [Issue tracker](https://github.com/SaiAkashNeela/checkemail-dev/issues)
+- [Issue tracker](https://github.com/SaiAkashNeela/checkemail/issues)
 - [Author: Sai Akash Neela](https://github.com/SaiAkashNeela)
