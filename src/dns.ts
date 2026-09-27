@@ -20,13 +20,93 @@ function setCached(key: string, val: unknown, ttlMs: number) {
 
 const TTL = 60 * 60 * 1000; // 1 hour
 
+async function resolveMxViaDoH(domain: string): Promise<dns.MxRecord[]> {
+    // 1. Cloudflare 1.1.1.1 DoH
+    try {
+        const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=MX`, {
+            headers: { 'accept': 'application/dns-json' },
+            signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+            const data = await res.json() as { Answer?: Array<{ data: string }> };
+            if (data.Answer && data.Answer.length > 0) {
+                return data.Answer.map(ans => {
+                    const parts = ans.data.trim().split(/\s+/);
+                    const priority = parseInt(parts[0], 10) || 10;
+                    const exchange = (parts[1] || parts[0]).replace(/\.$/, '');
+                    return { priority, exchange };
+                });
+            }
+        }
+    } catch { /* fall through to Google */ }
+
+    // 2. Google 8.8.8.8 DoH fallback
+    try {
+        const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=MX`, {
+            signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+            const data = await res.json() as { Answer?: Array<{ data: string }> };
+            if (data.Answer && data.Answer.length > 0) {
+                return data.Answer.map(ans => {
+                    const parts = ans.data.trim().split(/\s+/);
+                    const priority = parseInt(parts[0], 10) || 10;
+                    const exchange = (parts[1] || parts[0]).replace(/\.$/, '');
+                    return { priority, exchange };
+                });
+            }
+        }
+    } catch { /* all DNS fallbacks failed */ }
+
+    return [];
+}
+
+async function domainExistsViaDoH(domain: string): Promise<boolean> {
+    // 1. Cloudflare 1.1.1.1 DoH
+    try {
+        const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=A`, {
+            headers: { 'accept': 'application/dns-json' },
+            signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+            const data = await res.json() as { Status: number; Answer?: unknown[] };
+            if (data.Status === 0 && Boolean(data.Answer && data.Answer.length > 0)) {
+                return true;
+            }
+        }
+    } catch { /* fall through to Google */ }
+
+    // 2. Google 8.8.8.8 DoH fallback
+    try {
+        const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`, {
+            signal: AbortSignal.timeout(3000)
+        });
+        if (res.ok) {
+            const data = await res.json() as { Status: number; Answer?: unknown[] };
+            return data.Status === 0 && Boolean(data.Answer && data.Answer.length > 0);
+        }
+    } catch { /* all DNS fallbacks failed */ }
+
+    return false;
+}
+
 export async function resolveMx(domain: string): Promise<dns.MxRecord[]> {
     const key = `mx:${domain}`;
     const cached = getCached<dns.MxRecord[]>(key);
     if (cached) return cached;
-    const records = await dnsPromises.resolveMx(domain);
-    setCached(key, records, TTL);
-    return records;
+    try {
+        const records = await dnsPromises.resolveMx(domain);
+        setCached(key, records, TTL);
+        return records;
+    } catch {
+        // Fallback: Cloudflare DNS-over-HTTPS (in case UDP port 53 is blocked or ISP flaked)
+        const fallback = await resolveMxViaDoH(domain);
+        if (fallback.length > 0) {
+            setCached(key, fallback, TTL);
+            return fallback;
+        }
+        throw new Error('MX lookup failed');
+    }
 }
 
 export async function resolveTxt(domain: string): Promise<string[][]> {
@@ -47,8 +127,10 @@ export async function domainExists(domain: string): Promise<boolean> {
         setCached(key, true, TTL);
         return true;
     } catch {
-        setCached(key, false, TTL);
-        return false;
+        // Fallback: Cloudflare DNS-over-HTTPS
+        const exists = await domainExistsViaDoH(domain);
+        setCached(key, exists, TTL);
+        return exists;
     }
 }
 

@@ -73,7 +73,29 @@ var result = await httpClient.GetFromJsonAsync<object>(
 | `GET /validate?email=` | Validate an email address |
 | `GET /health` | Health check |
 
-## Usage
+## Using in the Browser / Plain HTML
+
+Want to validate emails directly on a static website or in client-side HTML without running your own backend?
+
+You can query MX and DNS records directly in the browser via Cloudflare's open [DNS-over-HTTPS (DoH)](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/) endpoint. It supports CORS out of the box:
+
+```html
+<script>
+// Query MX records directly from client-side JavaScript (no server required)
+async function checkMX(domain) {
+  const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=MX`, {
+    headers: { 'accept': 'application/dns-json' }
+  });
+  const data = await res.json();
+  const hasMx = Boolean(data.Answer && data.Answer.length > 0);
+  return { hasMx, answers: data.Answer || [] };
+}
+</script>
+```
+
+Combine this with client-side syntax regex, disposable domain matching, and alias detection for an entirely serverless frontend validator.
+
+## Node.js Usage
 
 ```ts
 import { validateEmail } from 'checkemail';
