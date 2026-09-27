@@ -70,11 +70,11 @@
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "author": { "@id": "https://checkemail.dev/#author" },
-      "downloadUrl": "https://www.npmjs.com/package/checkemail",
-      "installUrl": "https://www.npmjs.com/package/checkemail",
+      "downloadUrl": "https://www.npmjs.com/package/@isan3/checkemail",
+      "installUrl": "https://www.npmjs.com/package/@isan3/checkemail",
       "sameAs": [
         "https://github.com/SaiAkashNeela/checkemail",
-        "https://www.npmjs.com/package/checkemail",
+        "https://www.npmjs.com/package/@isan3/checkemail",
         "https://hub.docker.com/r/saiakashneela/checkemail"
       ],
       "featureList": [
@@ -405,7 +405,7 @@ footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
     </ul>
     <div class="nav-end">
       <a class="star" href="https://github.com/SaiAkashNeela/checkemail" aria-label="Star checkemail on GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i>Star<span class="star-count" id="stars"></span></a>
-      <a class="icon-btn npm-link" href="https://www.npmjs.com/package/checkemail" aria-label="checkemail on npm"><span class="brand-mark bm-npm" aria-hidden="true"></span></a>
+      <a class="icon-btn npm-link" href="https://www.npmjs.com/package/@isan3/checkemail" aria-label="@isan3/checkemail on npm"><span class="brand-mark bm-npm" aria-hidden="true"></span></a>
       <button class="icon-btn" id="theme" type="button" aria-label="Toggle color theme"><i class="ph ph-moon" aria-hidden="true"></i></button>
       <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><i class="ph ph-list" aria-hidden="true"></i></button>
     </div>
@@ -420,7 +420,7 @@ footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
         <h1 class="rise" style="--d:1">Email validation with <span>zero dependencies.</span></h1>
         <p class="lede rise" style="--d:2">Check syntax, MX records, disposable domains and aliases. Free, open source, and nothing leaves your servers.</p>
         <div class="install rise" style="--d:3">
-          <div class="cmd"><span class="p" aria-hidden="true">$</span><code>npm i checkemail</code><button class="copy" type="button" data-copy="npm i checkemail" aria-label="Copy install command"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
+          <div class="cmd"><span class="p" aria-hidden="true">$</span><code>npm i @isan3/checkemail</code><button class="copy" type="button" data-copy="npm i @isan3/checkemail" aria-label="Copy install command"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
           <p class="alt">Not using Node.js? <a href="#docker">Run it with Docker</a></p>
         </div>
         <div class="hero-actions rise" style="--d:4">
@@ -492,7 +492,7 @@ footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
 
         <div role="tabpanel" id="p-node" aria-labelledby="t-node">
           <div class="panel-bar"><span>index.mjs</span><button class="copy" type="button" data-copy-from="c-node" aria-label="Copy code"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
-<pre class="code"><code id="c-node" data-lang="js">import { validateEmail } from 'checkemail';
+<pre class="code"><code id="c-node" data-lang="js">import { validateEmail } from '@isan3/checkemail';
 
 const { confidence } = await validateEmail('john.doe+test@gmail.com');
 console.log(confidence.status, confidence.canonical_email); // LIKELY johndoe@gmail.com</code></pre>
@@ -583,7 +583,7 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
         <h4>Project</h4>
         <ul>
           <li><a href="https://github.com/SaiAkashNeela/checkemail"><i class="ph ph-github-logo" aria-hidden="true"></i>GitHub repository</a></li>
-          <li><a href="https://www.npmjs.com/package/checkemail"><span class="brand-mark bm-npm" aria-hidden="true"></span>npm registry</a></li>
+          <li><a href="https://www.npmjs.com/package/@isan3/checkemail"><span class="brand-mark bm-npm" aria-hidden="true"></span>npm registry</a></li>
           <li><a href="https://hub.docker.com/r/saiakashneela/checkemail"><span class="brand-mark bm-docker" aria-hidden="true"></span>Docker Hub</a></li>
           <li><a href="https://github.com/SaiAkashNeela/checkemail/issues"><i class="ph ph-bug" aria-hidden="true"></i>Issue tracker</a></li>
         </ul>

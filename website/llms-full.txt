@@ -4,7 +4,7 @@
 
 Website: https://checkemail.dev/
 Source: https://github.com/SaiAkashNeela/checkemail
-npm: https://www.npmjs.com/package/checkemail
+npm: https://www.npmjs.com/package/@isan3/checkemail
 Docker Hub: https://hub.docker.com/r/saiakashneela/checkemail
 License: MIT
 
@@ -26,15 +26,15 @@ checkemail does not open SMTP connections and does not send RCPT probes. A LIKEL
 ## Install (Node.js 18+ or Bun)
 
 ```bash
-npm i checkemail
+npm i @isan3/checkemail
 # or
-bun add checkemail
+bun add @isan3/checkemail
 ```
 
 ## Usage
 
 ```js
-import { validateEmail } from 'checkemail';
+import { validateEmail } from '@isan3/checkemail';
 
 const result = await validateEmail('john.doe+test@gmail.com');
 ```

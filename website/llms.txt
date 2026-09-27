@@ -1,10 +1,10 @@
 # checkemail
 
-> checkemail is a free, open-source (MIT) email validation engine by Sai Akash Neela (@saiakashneela). It checks RFC 5321/5322 syntax, DNS A/CNAME and MX records, matches 9,000+ disposable domains, detects role inboxes, canonicalizes aliases (Gmail dots, plus-addressing, pm.me), fingerprints the mail provider and returns a 0-100 confidence score. Zero runtime dependencies. Runs in Node.js 18+ and Bun (npm package `checkemail`), as a Docker HTTP API (`saiakashneela/checkemail`), or directly in the browser.
+> checkemail is a free, open-source (MIT) email validation engine by Sai Akash Neela (@saiakashneela). It checks RFC 5321/5322 syntax, DNS A/CNAME and MX records, matches 9,000+ disposable domains, detects role inboxes, canonicalizes aliases (Gmail dots, plus-addressing, pm.me), fingerprints the mail provider and returns a 0-100 confidence score. Zero runtime dependencies. Runs in Node.js 18+ and Bun (npm package `@isan3/checkemail`), as a Docker HTTP API (`saiakashneela/checkemail`), or directly in the browser.
 
 Key facts:
 
-- Install: `npm i checkemail` or `bun add checkemail`. Usage: `import { validateEmail } from 'checkemail'; await validateEmail('john.doe+test@gmail.com')`.
+- Install: `npm i @isan3/checkemail` or `bun add @isan3/checkemail`. Usage: `import { validateEmail } from '@isan3/checkemail'; await validateEmail('john.doe+test@gmail.com')`.
 - Docker: `docker run -p 3000:3000 saiakashneela/checkemail`, then `GET /validate?email=` and `GET /health`.
 - checkemail never sends SMTP probes. It proves the domain can receive mail, not that a specific mailbox exists.
 - Statuses: LIKELY, DISPOSABLE, INVALID_DOMAIN, NO_MX_RECORDS, INVALID_FORMAT. Anything other than LIKELY scores 0; a clean personal address scores 90.
@@ -19,7 +19,7 @@ Key facts:
 
 ## Packages
 
-- [npm: checkemail](https://www.npmjs.com/package/checkemail)
+- [npm: @isan3/checkemail](https://www.npmjs.com/package/@isan3/checkemail)
 - [Docker Hub: saiakashneela/checkemail](https://hub.docker.com/r/saiakashneela/checkemail)
 - [GitHub: SaiAkashNeela/checkemail](https://github.com/SaiAkashNeela/checkemail)
 
