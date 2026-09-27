@@ -30,12 +30,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SaiAkashNeela/checkemail-dev.git"
+    "url": "git+https://github.com/SaiAkashNeela/checkemail.git"
   },
   "bugs": {
-    "url": "https://github.com/SaiAkashNeela/checkemail-dev/issues"
+    "url": "https://github.com/SaiAkashNeela/checkemail/issues"
   },
-  "homepage": "https://github.com/SaiAkashNeela/checkemail-dev#readme",
+  "homepage": "https://github.com/SaiAkashNeela/checkemail#readme",
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.4.2",
