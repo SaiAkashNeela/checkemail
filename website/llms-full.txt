@@ -16,7 +16,7 @@ License: MIT
 | Domain existence | DNS A lookup (CNAMEs followed) |
 | Mail server | DNS MX lookup |
 | Disposable domain | Exact match against 9,000+ domains from the disposable-email-domains project |
-| Role inbox | 360+ prefixes such as support, admin, billing, noreply; skipped on consumer domains (admin@gmail.com is a person) |
+| Role inbox | 370+ prefixes such as support, admin, billing, noreply; skipped on consumer domains (admin@gmail.com is a person) |
 | Provider | Known domain sets, plus MX/SPF fingerprinting for Google Workspace and Microsoft 365 custom domains |
 | Aliases | Plus-addressing, Gmail/Proton dot stripping, equivalent domains (googlemail.com, pm.me, me.com) |
 | Score | Weighted 0-100 confidence |
