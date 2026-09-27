@@ -1,7 +1,7 @@
-# checkemail
+# @isan3/checkemail
 
-[![npm version](https://img.shields.io/npm/v/checkemail.svg)](https://www.npmjs.com/package/checkemail)
-[![npm downloads](https://img.shields.io/npm/dm/checkemail.svg)](https://www.npmjs.com/package/checkemail)
+[![npm version](https://img.shields.io/npm/v/@isan3/checkemail.svg)](https://www.npmjs.com/package/@isan3/checkemail)
+[![npm downloads](https://img.shields.io/npm/dm/@isan3/checkemail.svg)](https://www.npmjs.com/package/@isan3/checkemail)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Fast, zero-dependency email validation for Node.js. No API keys. No rate limits. Runs entirely offline (except DNS lookups).
@@ -20,14 +20,14 @@ Fast, zero-dependency email validation for Node.js. No API keys. No rate limits.
 | ✅ Role-based detection | 360+ role prefixes (`admin@`, `noreply@`, `support@`, ...) |
 | ✅ Confidence scoring | 0–100 composite score |
 
-**Zero runtime dependencies** — uses Node's built-in `dns` module. No Redis, no Docker, no API calls.
+**Zero runtime dependencies** — uses Node's built-in `dns` module with Cloudflare/Google DoH fallback. No Redis, no Docker, no API calls.
 
 ## Install
 
 ```bash
-bun add checkemail
+bun add @isan3/checkemail
 # or
-npm install checkemail
+npm install @isan3/checkemail
 ```
 
 Requires **Node.js >= 18**.
@@ -98,7 +98,7 @@ Combine this with client-side syntax regex, disposable domain matching, and alia
 ## Node.js Usage
 
 ```ts
-import { validateEmail } from 'checkemail';
+import { validateEmail } from '@isan3/checkemail';
 
 const result = await validateEmail('john+test@gmail.com');
 console.log(result);

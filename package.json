@@ -1,6 +1,9 @@
 {
-  "name": "checkemail",
+  "name": "@isan3/checkemail",
   "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Fast, zero-dependency email validation: syntax, MX/DNS lookup, disposable detection, alias analysis, provider fingerprinting, and confidence scoring.",
   "packageManager": "bun@1.3.13",
   "main": "dist/index.js",
