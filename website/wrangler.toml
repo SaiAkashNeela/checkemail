@@ -1,0 +1,9 @@
+name = "checkemail"
+main = "functions/index.ts"
+compatibility_date = "2026-09-01"
+
+# Static landing page. /api/* goes to the Worker first; everything else is served from ./public.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]

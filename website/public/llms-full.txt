@@ -1,0 +1,198 @@
+# checkemail: full documentation
+
+> Free, open-source (MIT) email validation engine by Sai Akash Neela (@saiakashneela). Syntax, DNS and MX checks, disposable detection, role detection, alias canonicalization, provider fingerprinting and a 0-100 confidence score, with zero runtime dependencies.
+
+Website: https://checkemail.dev/
+Source: https://github.com/SaiAkashNeela/checkemail-dev
+npm: https://www.npmjs.com/package/checkemail
+Docker Hub: https://hub.docker.com/r/saiakashneela/checkemail
+License: MIT
+
+## What it checks
+
+| Check | How |
+|---|---|
+| Syntax | RFC 5321/5322 local part and domain rules; 254 characters total, 64 for the local part |
+| Domain existence | DNS A lookup (CNAMEs followed) |
+| Mail server | DNS MX lookup |
+| Disposable domain | Exact match against 9,000+ domains from the disposable-email-domains project |
+| Role inbox | 360+ prefixes such as support, admin, billing, noreply; skipped on consumer domains (admin@gmail.com is a person) |
+| Provider | Known domain sets, plus MX/SPF fingerprinting for Google Workspace and Microsoft 365 custom domains |
+| Aliases | Plus-addressing, Gmail/Proton dot stripping, equivalent domains (googlemail.com, pm.me, me.com) |
+| Score | Weighted 0-100 confidence |
+
+checkemail does not open SMTP connections and does not send RCPT probes. A LIKELY result means the domain exists and accepts mail; it does not prove that the individual mailbox exists.
+
+## Install (Node.js 18+ or Bun)
+
+```bash
+npm i checkemail
+# or
+bun add checkemail
+```
+
+## Usage
+
+```js
+import { validateEmail } from 'checkemail';
+
+const result = await validateEmail('john.doe+test@gmail.com');
+```
+
+Result:
+
+```json
+{
+  "email": "john.doe+test@gmail.com",
+  "validations": {
+    "syntax": true,
+    "domain_exists": true,
+    "mx_records": true,
+    "is_disposable": false
+  },
+  "confidence": {
+    "score": 65,
+    "status": "LIKELY",
+    "is_role_based": false,
+    "alias_status": "ALIAS_CONFIRMED",
+    "canonical_email": "johndoe@gmail.com",
+    "equivalent_domains": ["gmail.com", "googlemail.com"]
+  },
+  "provider": { "id": "GMAIL", "name": "Gmail" },
+  "meta": { "latency_ms": 51 }
+}
+```
+
+More examples (actual outputs):
+
+- `temp@mailinator.com` -> status DISPOSABLE, score 0, returned before any DNS lookup
+- `user@pm.me` -> provider PROTON, alias_status ALIAS_CONFIRMED, canonical_email user@protonmail.com, score 65
+- `support@github.com` -> provider MICROSOFT_365 (detected via MX), is_role_based true, score 80
+- `admin@gmail.com` -> is_role_based false (consumer domain), score 90
+
+## Pipeline
+
+1. Normalize: trim, lowercase, spaces become `+` (a `+` in a query string decodes as a space).
+2. Syntax check. Failure returns INVALID_FORMAT, score 0.
+3. Disposable lookup. A match returns DISPOSABLE, score 0, with no DNS lookups.
+4. DNS: A and MX lookups in parallel with provider/alias classification, over the system resolver with Cloudflare and Google DNS-over-HTTPS as fallback. Results are cached in-process for one hour.
+5. Status: no A record -> INVALID_DOMAIN; no MX (or only a null MX, RFC 7505) -> NO_MX_RECORDS; otherwise LIKELY. Role and alias signals are reset for non-LIKELY results.
+6. Score.
+
+## confidence.status
+
+| Value | Meaning |
+|---|---|
+| LIKELY | Valid syntax, domain resolves, MX records present |
+| INVALID_FORMAT | Syntax is wrong |
+| INVALID_DOMAIN | Domain does not resolve in DNS |
+| NO_MX_RECORDS | Domain exists but publishes no mail server |
+| DISPOSABLE | Throwaway address from a disposable provider |
+
+## confidence.score
+
+Any status other than LIKELY scores 0. Otherwise:
+
+| Signal | Points |
+|---|---|
+| Domain resolves | +20 |
+| MX records found | +20 |
+| Not disposable | +20 |
+| alias_status MAYBE_NOT_ALIAS | +20 |
+| alias_status ALIAS_POSSIBLE | +10 |
+| alias_status ALIAS_CONFIRMED | -5 |
+| Not a role inbox | +10 |
+
+The maximum is 90 (clean personal address). A confirmed alias on a personal address scores 65; a role inbox with no alias scores 80.
+
+## confidence.alias_status
+
+| Value | Meaning |
+|---|---|
+| MAYBE_NOT_ALIAS | No alias signals |
+| ALIAS_CONFIRMED | Plus tag on a provider that supports it, Gmail/Proton dots, or an equivalent domain |
+| ALIAS_POSSIBLE | Plus tag or dots on Google Workspace / Microsoft 365, where sub-addressing is optional |
+| ALIAS_UNKNOWN | Plus tag on an unrecognized provider |
+
+`canonical_email` is the address with the tag removed, dots stripped where the provider ignores them, and the domain folded to its canonical form (gmail.com, protonmail.com, icloud.com). It is null when nothing changed.
+
+## provider.id
+
+| ID | Detected from |
+|---|---|
+| GMAIL | gmail.com, googlemail.com |
+| GOOGLE_WORKSPACE | Custom domain whose MX or SPF points at Google |
+| MICROSOFT_CONSUMER | outlook.com, hotmail.com, live.com, msn.com |
+| MICROSOFT_365 | Custom domain whose MX or SPF points at outlook.com / spf.protection.outlook.com |
+| APPLE_ICLOUD | icloud.com, me.com, mac.com |
+| PROTON | proton.me, protonmail.com, pm.me, protonmail.ch |
+| YAHOO | yahoo.com, yahoo.co.uk, yahoo.co.in, ymail.com, rocketmail.com |
+| FASTMAIL | fastmail.com, fastmail.fm |
+| ZOHO | zoho.com, zohomail.com |
+| YANDEX | yandex.com, yandex.ru, yandex.ua |
+| GOOGLE_GROUPS | googlegroups.com |
+
+`provider` is null when the provider is not recognized.
+
+## Docker HTTP API (any language)
+
+```bash
+docker run -p 3000:3000 saiakashneela/checkemail
+curl "http://localhost:3000/validate?email=john.doe%2Btest@gmail.com"
+```
+
+| Endpoint | Description |
+|---|---|
+| GET /validate?email= | Validation result (same JSON as the npm package) |
+| GET /health | Health check |
+
+The port is set by the PORT environment variable (default 3000). CORS allows GET from any origin. Missing `email` returns HTTP 400.
+
+Python:
+
+```python
+import requests
+r = requests.get('http://localhost:3000/validate', params={'email': 'john@gmail.com'})
+print(r.json()['confidence']['status'])
+```
+
+## Cloudflare Workers
+
+The repository's `website/` folder is a Worker that serves checkemail.dev and an API:
+
+```bash
+git clone https://github.com/SaiAkashNeela/checkemail-dev
+cd checkemail-dev/website
+npx wrangler deploy
+```
+
+| Endpoint | Description |
+|---|---|
+| GET /api/validate?email= | Same response as the Docker API, plus `records` (raw A, CNAME and MX answers) |
+| GET /api/health | Health check and dataset sizes |
+
+The edge build bundles the domain lists (the npm build reads them from disk, which Workers can't), reuses checkemail's syntax and scoring modules, and resolves DNS over HTTPS through Cloudflare's 1.1.1.1. Each check makes at most three DNS subrequests.
+
+## Disposable list updates
+
+A GitHub Actions workflow runs every Monday and Thursday at 09:00 UTC. It downloads the latest disposable-email-domains blocklist, bumps the patch version and republishes to npm and Docker Hub. Update the dependency to pick it up.
+
+## FAQ
+
+Q: Does checkemail confirm that a mailbox exists?
+A: No. It never opens an SMTP connection. It verifies syntax, DNS and MX, then scores the address.
+
+Q: Is it free for commercial use?
+A: Yes. MIT licensed, no API keys, no per-check pricing, no usage tiers.
+
+Q: Where does my data go?
+A: Validation runs in your own process. Only the domain is sent over the network, as DNS queries to your resolver.
+
+Q: Can I use it from Python, Go, Java, .NET or PHP?
+A: Yes, through the Docker HTTP API.
+
+## Author
+
+Created and maintained by Sai Akash Neela (saiakashneela).
+GitHub: https://github.com/SaiAkashNeela
+Website: https://www.saiakashneela.com

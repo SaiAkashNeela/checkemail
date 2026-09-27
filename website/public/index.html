@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>checkemail: Free, Open-Source Email Validation for Node.js, Docker &amp; Edge</title>
+<meta name="description" content="Validate email syntax, domain, MX records, disposable domains (9,000+), Gmail aliases and mail providers with zero dependencies. MIT licensed. Node.js, Bun, Docker, Cloudflare Workers.">
+<meta name="author" content="Sai Akash Neela">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="https://checkemail.dev/">
+<link rel="alternate" type="text/markdown" href="https://checkemail.dev/llms.txt" title="LLM-readable summary">
+<link rel="sitemap" type="application/xml" href="https://checkemail.dev/sitemap.xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="checkemail">
+<meta property="og:url" content="https://checkemail.dev/">
+<meta property="og:title" content="checkemail: free, open-source email validation">
+<meta property="og:description" content="Syntax, DNS and MX checks, disposable detection, alias canonicalization and provider fingerprinting. Zero dependencies, zero monthly fees.">
+<meta property="og:image" content="https://checkemail.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="checkemail: email validation with zero dependencies.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="checkemail: free, open-source email validation">
+<meta name="twitter:description" content="Syntax, DNS and MX checks, disposable detection, alias canonicalization and provider fingerprinting. Zero dependencies.">
+<meta name="twitter:image" content="https://checkemail.dev/og.png">
+<meta name="application-name" content="checkemail">
+<meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c10" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d0f14'/%3E%3Cg transform='translate(4 4)' fill='none' stroke='%23fafbfc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8'/%3E%3Cpath d='m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'/%3E%3Cpath d='m16 19 2 2 4-4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/regular/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://checkemail.dev/#website",
+      "url": "https://checkemail.dev/",
+      "name": "checkemail",
+      "description": "Fast, zero-dependency email validation",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://checkemail.dev/#author" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://checkemail.dev/#author",
+      "name": "Sai Akash Neela",
+      "alternateName": "saiakashneela",
+      "url": "https://www.saiakashneela.com",
+      "sameAs": ["https://github.com/SaiAkashNeela", "https://www.saiakashneela.com"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://checkemail.dev/#software",
+      "name": "checkemail",
+      "url": "https://checkemail.dev/",
+      "description": "Open-source email validation engine: RFC 5321/5322 syntax, DNS A/CNAME and MX checks, disposable domain detection against 9,000+ domains, plus-address and dot-alias canonicalization, mail provider fingerprinting and a 0-100 confidence score. Runs in Node.js, Bun, Docker or Cloudflare Workers.",
+      "applicationCategory": "DeveloperApplication",
+      "applicationSubCategory": "Email validation library",
+      "operatingSystem": "Node.js 18+, Bun, Docker, Cloudflare Workers",
+      "softwareRequirements": "Node.js >= 18 or Bun",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@id": "https://checkemail.dev/#author" },
+      "downloadUrl": "https://www.npmjs.com/package/checkemail",
+      "installUrl": "https://www.npmjs.com/package/checkemail",
+      "sameAs": [
+        "https://github.com/SaiAkashNeela/checkemail-dev",
+        "https://www.npmjs.com/package/checkemail",
+        "https://hub.docker.com/r/saiakashneela/checkemail"
+      ],
+      "featureList": [
+        "RFC 5321/5322 syntax validation",
+        "DNS A/CNAME domain existence check",
+        "MX record check",
+        "Disposable email detection (9,000+ domains, refreshed twice a week)",
+        "Role-based address detection (360+ prefixes)",
+        "Gmail dot and plus-address canonicalization",
+        "Proton, Gmail and iCloud domain equivalence",
+        "Provider fingerprinting: Gmail, Google Workspace, Microsoft, Microsoft 365, iCloud, Proton, Yahoo, Fastmail, Zoho, Yandex, Google Groups",
+        "Composite 0-100 confidence score"
+      ]
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://checkemail.dev/#source",
+      "name": "checkemail",
+      "codeRepository": "https://github.com/SaiAkashNeela/checkemail-dev",
+      "programmingLanguage": "TypeScript",
+      "runtimePlatform": ["Node.js", "Bun", "Docker", "Cloudflare Workers"],
+      "license": "https://opensource.org/licenses/MIT",
+      "author": { "@id": "https://checkemail.dev/#author" },
+      "targetProduct": { "@id": "https://checkemail.dev/#software" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://checkemail.dev/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Does checkemail confirm that a mailbox exists?", "acceptedAnswer": { "@type": "Answer", "text": "No. checkemail never opens an SMTP connection or sends a RCPT probe. It verifies syntax, that the domain resolves in DNS, and that it publishes MX records, then scores the address. LIKELY means the domain can receive mail; it does not prove the individual mailbox exists." } },
+        { "@type": "Question", "name": "How does checkemail detect disposable email addresses?", "acceptedAnswer": { "@type": "Answer", "text": "It matches the domain exactly against the community-maintained disposable-email-domains blocklist (9,000+ domains). The package republishes with a fresh copy every Monday and Thursday via GitHub Actions. A disposable match returns status DISPOSABLE with score 0 before any DNS lookup." } },
+        { "@type": "Question", "name": "How does checkemail handle Gmail aliases like john.doe+test@gmail.com?", "acceptedAnswer": { "@type": "Answer", "text": "It strips the +tag, removes dots from the local part and folds googlemail.com into gmail.com. john.doe+test@gmail.com returns alias_status ALIAS_CONFIRMED and canonical_email johndoe@gmail.com, so you can detect repeat signups." } },
+        { "@type": "Question", "name": "Which email providers can checkemail identify?", "acceptedAnswer": { "@type": "Answer", "text": "Gmail, Microsoft consumer (Outlook, Hotmail, Live, MSN), iCloud, Proton Mail, Yahoo, Fastmail, Zoho Mail, Yandex Mail and Google Groups from the domain. Custom domains hosted on Google Workspace or Microsoft 365 are detected from their MX and SPF records." } },
+        { "@type": "Question", "name": "Can I use checkemail from Python, Go, Java, .NET or PHP?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Run the Docker image (docker run -p 3000:3000 saiakashneela/checkemail) and call GET /validate?email= from any HTTP client. The response is the same JSON the Node.js package returns." } },
+        { "@type": "Question", "name": "Does checkemail run on Cloudflare Workers or in the browser?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The repository includes an edge build that resolves DNS over HTTPS through Cloudflare's 1.1.1.1 and deploys with npx wrangler deploy. The demo on checkemail.dev runs the same logic directly in the browser." } },
+        { "@type": "Question", "name": "What does the checkemail confidence score mean?", "acceptedAnswer": { "@type": "Answer", "text": "Any status other than LIKELY scores 0. Otherwise points are summed: +20 domain resolves, +20 MX records, +20 not disposable, +20 no alias signals (+10 alias possible, -5 alias confirmed), +10 not a role inbox. A clean personal address scores 90." } },
+        { "@type": "Question", "name": "Is checkemail free for commercial use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. checkemail is MIT licensed, has no API keys, no per-check pricing and no usage tiers." } }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+/* Tokens. Radius rule: controls 8px, panels 14px, chips 999px. */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --sunk: #eceef2;
+  --ink: #0f1218;
+  --ink-2: #3a404d;
+  --muted: #646b7a;
+  --rule: #dfe2e8;
+  --accent: #2438e8;
+  --accent-ink: #ffffff;
+  --accent-wash: #eceefe;
+  --bad: #c43a17;
+  --bad-wash: #fcebe5;
+  --warn: #8a5d00;
+  --warn-wash: #fbf1dc;
+  --code-bg: #0f1218;
+  --code-ink: #d8dbe3;
+  --code-muted: #7d8494;
+  --code-str: #9aa6ff;
+  --code-key: #ffb86b;
+  --shadow: 0 1px 2px rgba(15, 18, 24, .04), 0 12px 40px -12px rgba(36, 56, 232, .14);
+  --font: "Satoshi", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0c10; --surface: #13151b; --sunk: #1a1d25; --ink: #eceef2; --ink-2: #c3c8d3; --muted: #8f95a4; --rule: #262a34;
+    --accent: #8e97ff; --accent-ink: #0b0c10; --accent-wash: #1a1d3a; --bad: #ff7a59; --bad-wash: #2d1510; --warn: #f0b429; --warn-wash: #2a2010;
+    --code-bg: #08090c; --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 16px 40px -16px rgba(0, 0, 0, .7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0c10; --surface: #13151b; --sunk: #1a1d25; --ink: #eceef2; --ink-2: #c3c8d3; --muted: #8f95a4; --rule: #262a34;
+  --accent: #8e97ff; --accent-ink: #0b0c10; --accent-wash: #1a1d3a; --bad: #ff7a59; --bad-wash: #2d1510; --warn: #f0b429; --warn-wash: #2a2010;
+  --code-bg: #08090c; --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 16px 40px -16px rgba(0, 0, 0, .7);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16.5px/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-underline-offset: 3px; }
+code, pre { font-family: var(--mono); }
+button { font: inherit; color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+.skip { position: absolute; left: -9999px; top: 8px; z-index: 100; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; }
+.skip:focus { left: 8px; }
+.brand-mark { display: inline-block; width: 1em; height: 1em; background: currentColor; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; flex: none; }
+.bm-npm { --m: url("https://cdn.simpleicons.org/npm"); }
+.bm-docker { --m: url("https://cdn.simpleicons.org/docker"); }
+.bm-cloudflare { --m: url("https://cdn.simpleicons.org/cloudflare"); }
+.bm-node { --m: url("https://cdn.simpleicons.org/nodedotjs"); }
+p code, li code, dd code, .note code { font-size: .86em; background: var(--sunk); padding: 1px 6px; border-radius: 5px; }
+
+/* ---------- Header ---------- */
+.nav { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--rule); }
+@supports not (backdrop-filter: blur(1px)) { .nav { background: var(--bg); } }
+.nav-inner { height: 64px; display: flex; align-items: center; gap: 28px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
+.logo-mark { width: 30px; height: 30px; border-radius: 7px; background: var(--ink); color: var(--bg); display: grid; place-items: center; }
+.logo-mark svg { width: 19px; height: 19px; }
+.logo-word { font-weight: 700; font-size: 18px; letter-spacing: -.02em; }
+.nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
+.nav-links a { text-decoration: none; font-size: 14.5px; font-weight: 500; color: var(--ink-2); white-space: nowrap; }
+.nav-links a:hover { color: var(--accent); }
+.nav-end { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn { width: 38px; height: 38px; display: inline-grid; place-items: center; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); cursor: pointer; font-size: 17px; color: var(--ink); text-decoration: none; }
+.icon-btn:hover { border-color: var(--muted); }
+.star { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); text-decoration: none; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.star:hover { border-color: var(--muted); }
+.star-count { font: 12px var(--mono); color: var(--muted); padding-left: 8px; border-left: 1px solid var(--rule); }
+.star-count:empty { display: none; }
+.menu-btn { display: none; }
+@media (max-width: 960px) {
+  .nav-links { display: none; }
+  .menu-btn { display: inline-grid; }
+  .nav.open .nav-links { display: flex; flex-direction: column; gap: 0; position: absolute; left: 0; right: 0; top: 64px; background: var(--bg); border-bottom: 1px solid var(--rule); padding: 4px 16px 12px; }
+  .nav.open .nav-links a { display: block; padding: 13px 0; font-size: 16px; border-bottom: 1px solid var(--rule); }
+}
+@media (max-width: 480px) { .nav-end .npm-link { display: none; } }
+
+/* ---------- Buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 46px; padding: 0 20px; border-radius: 8px; font-size: 15px; font-weight: 700; text-decoration: none; white-space: nowrap; cursor: pointer; border: 1px solid transparent; transition: background .15s, transform .1s, border-color .15s; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-ghost { background: var(--surface); border-color: var(--rule); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--muted); }
+.btn[disabled] { opacity: .65; cursor: progress; }
+
+/* ---------- Hero ---------- */
+.hero { padding: 56px 0 88px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: center; }
+.intro-col { order: 2; }
+.demo-col { order: 1; }
+.byline { margin: 0 0 18px; font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.byline img { width: 22px; height: 22px; border-radius: 50%; }
+.byline a { color: var(--ink); font-weight: 500; text-decoration: none; }
+.byline a:hover { color: var(--accent); }
+h1 { font-weight: 900; font-size: clamp(2.2rem, 1.5rem + 2.2vw, 3.3rem); line-height: 1.05; letter-spacing: -.035em; margin: 0; text-wrap: balance; }
+h1 span { color: var(--accent); }
+.lede { margin: 18px 0 0; font-size: 18px; line-height: 1.55; color: var(--ink-2); max-width: 36ch; }
+.install { margin-top: 30px; }
+.cmd { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 6px 0 16px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); font: 15px var(--mono); }
+.cmd .p { color: var(--accent); user-select: none; }
+.cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.cmd code::-webkit-scrollbar { display: none; }
+.copy { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; font-size: 17px; }
+.copy:hover { color: var(--ink); background: var(--sunk); }
+.copy.done { color: var(--accent); }
+.alt { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+.alt a { color: var(--ink-2); font-weight: 500; }
+.hero-actions { margin-top: 26px; }
+@media (max-width: 1100px) { .hero-grid { gap: 36px; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .intro-col { order: 1; max-width: 640px; }
+  .demo-col { order: 2; }
+}
+@media (max-width: 640px) { .hero { padding: 36px 0 64px; } .lede { font-size: 17px; } }
+
+/* ---------- Demo card ---------- */
+.demo { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.demo form { padding: 20px; border-bottom: 1px solid var(--rule); }
+.demo label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.field { display: flex; gap: 8px; }
+.field input { flex: 1; min-width: 0; height: 48px; padding: 0 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--bg); color: var(--ink); font: 15.5px var(--mono); transition: border-color .15s, box-shadow .15s; }
+.field input::placeholder { color: var(--muted); }
+.field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent); }
+.field .btn { height: 48px; }
+.examples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.chip { border: 1px solid var(--rule); background: transparent; border-radius: 999px; padding: 3px 11px; font: 12.5px var(--mono); color: var(--ink-2); cursor: pointer; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.help { margin: 12px 0 0; font-size: 12.5px; color: var(--muted); }
+@media (max-width: 480px) { .field { flex-direction: column; } .field input { flex: none; width: 100%; } .field .btn { width: 100%; } }
+
+.summary { display: flex; align-items: center; gap: 18px; padding: 20px; border-bottom: 1px solid var(--rule); min-height: 104px; }
+.score { font-weight: 900; font-size: 52px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; min-width: 2ch; }
+.score small { font-size: 16px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 2px; }
+.sum-text { min-width: 0; display: grid; gap: 4px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px var(--mono); padding: 3px 10px; border-radius: 999px; width: max-content; }
+.pill-good { background: var(--accent-wash); color: var(--accent); }
+.pill-bad { background: var(--bad-wash); color: var(--bad); }
+.pill-idle { background: var(--sunk); color: var(--muted); }
+.sum-desc { font-size: 15px; font-weight: 500; }
+.sum-meta { font-size: 13px; color: var(--muted); }
+
+.checks { list-style: none; margin: 0; padding: 8px 0; }
+.checks li { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 20px; font-size: 15px; }
+.checks li > i { font-size: 20px; }
+.checks .v { color: var(--muted); font-size: 14px; text-align: right; overflow-wrap: anywhere; }
+.checks .v code { font-size: 13px; color: var(--ink); }
+.ic-pass { color: var(--accent); }
+.ic-fail { color: var(--bad); }
+.ic-warn { color: var(--warn); }
+.ic-idle { color: var(--rule); }
+.ic-skip { color: var(--muted); }
+@media (max-width: 480px) { .checks li { padding: 9px 16px; gap: 10px; } .checks .v { max-width: 58vw; } .summary { padding: 18px 16px; gap: 14px; } .demo form { padding: 16px; } .score { font-size: 44px; } }
+
+.more { border-top: 1px solid var(--rule); }
+.more summary { padding: 14px 20px; font-size: 14px; font-weight: 500; color: var(--ink-2); cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary i { transition: transform .2s; }
+.more[open] summary i { transform: rotate(90deg); }
+.more dl { margin: 0; padding: 0 20px 6px; display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 14px; font-size: 13.5px; }
+.more dt { color: var(--muted); }
+.more dd { margin: 0; font: 13px/1.6 var(--mono); overflow-wrap: anywhere; }
+.more pre { margin: 14px 20px 20px; padding: 16px; border-radius: 8px; background: var(--code-bg); color: var(--code-ink); font-size: 12.5px; line-height: 1.6; overflow: auto; max-height: 320px; }
+
+.sk { height: 12px; border-radius: 4px; background: linear-gradient(90deg, var(--sunk), var(--rule), var(--sunk)); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.err { padding: 22px 20px; display: grid; gap: 6px; }
+.err strong { color: var(--bad); display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.err p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+
+/* ---------- Sections ---------- */
+section.block { padding: 96px 0; border-top: 1px solid var(--rule); }
+@media (max-width: 640px) { section.block { padding: 64px 0; } }
+h2 { font-weight: 900; font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.5rem); line-height: 1.1; letter-spacing: -.03em; margin: 0; text-wrap: balance; }
+.sub { font-size: 17.5px; color: var(--ink-2); margin: 12px 0 0; max-width: 52ch; }
+h3 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; margin: 0; }
+
+/* Steps */
+.steps { margin: 44px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.steps li { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 24px; }
+.steps .ico { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-wash); color: var(--accent); font-size: 21px; margin-bottom: 18px; }
+.steps p { margin: 8px 0 0; font-size: 15px; color: var(--ink-2); }
+@media (max-width: 1024px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+
+/* Why */
+.why { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
+.points { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; }
+.points li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; }
+.points i { font-size: 24px; color: var(--accent); }
+.points p { margin: 4px 0 0; font-size: 15px; color: var(--ink-2); }
+@media (max-width: 900px) { .why { grid-template-columns: minmax(0, 1fr); gap: 36px; } }
+@media (max-width: 560px) { .points { grid-template-columns: minmax(0, 1fr); } }
+
+/* Integrations */
+.anchor { display: block; height: 0; }
+.stack { margin-top: 40px; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; }
+.tabs { display: flex; gap: 4px; padding: 10px 10px 0; border-bottom: 1px solid #222632; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { flex: none; display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--code-muted); font-size: 14.5px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.tabs button:hover { color: var(--code-ink); }
+.tabs button[aria-selected="true"] { color: #fff; border-bottom-color: #8e97ff; }
+.tabs .brand-mark { font-size: 16px; }
+[role="tabpanel"][hidden] { display: none; }
+.panel-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 12px 0 22px; font: 12.5px var(--mono); color: var(--code-muted); }
+.panel-bar .copy { color: var(--code-muted); }
+.panel-bar .copy:hover { background: #1c202a; color: var(--code-ink); }
+.langs { display: flex; gap: 2px; flex-wrap: wrap; }
+.langs button { border: 0; border-radius: 6px; background: transparent; color: var(--code-muted); padding: 5px 10px; font: 12.5px var(--mono); cursor: pointer; }
+.langs button[aria-selected="true"] { background: #1c202a; color: var(--code-ink); }
+.code { margin: 0; padding: 14px 22px 22px; color: var(--code-ink); font-size: 14px; line-height: 1.75; overflow-x: auto; tab-size: 4; }
+.t-s { color: var(--code-str); }
+.t-k { color: var(--code-key); }
+.t-c { color: var(--code-muted); font-style: italic; }
+.code .p { color: var(--code-muted); user-select: none; }
+.note { margin: 0; padding: 14px 22px 18px; border-top: 1px solid #222632; font-size: 14px; color: var(--code-muted); }
+.note code { background: #1c202a; color: var(--code-ink); }
+.note a { color: var(--code-ink); }
+
+/* FAQ */
+.faq-wrap { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 56px; }
+.faq details { border-bottom: 1px solid var(--rule); }
+.faq details:first-child { border-top: 1px solid var(--rule); }
+.faq summary { list-style: none; cursor: pointer; padding: 18px 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 16.5px; font-weight: 700; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary i { color: var(--muted); font-size: 18px; flex: none; transition: transform .2s var(--ease); }
+.faq details[open] summary i { transform: rotate(45deg); }
+.faq p { margin: 0 0 20px; color: var(--ink-2); font-size: 15.5px; max-width: 66ch; }
+@media (max-width: 900px) { .faq-wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
+
+/* Footer */
+footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
+.foot { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr); gap: 40px; }
+.credit { font-weight: 900; font-size: clamp(1.4rem, 1rem + 1.4vw, 2rem); line-height: 1.2; letter-spacing: -.025em; margin: 0; max-width: 22ch; }
+.credit a { text-decoration: none; color: var(--accent); white-space: nowrap; }
+.credit span { color: var(--muted); font-weight: 500; }
+.license { margin: 14px 0 0; font-size: 15px; color: var(--ink-2); }
+.foot h4 { margin: 0 0 12px; font-size: 13px; font-weight: 500; color: var(--muted); }
+.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.foot ul a { text-decoration: none; font-size: 15px; display: inline-flex; gap: 10px; align-items: center; }
+.foot ul a:hover { color: var(--accent); }
+.foot ul a i, .foot ul a .brand-mark { font-size: 16px; color: var(--muted); }
+.fine { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); }
+@media (max-width: 760px) { .foot { grid-template-columns: 1fr 1fr; } .foot > :first-child { grid-column: 1 / -1; } }
+
+/* Motion: entrance for the hero, reveal on scroll, soft fade for new results */
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise .7s var(--ease) both; animation-delay: calc(var(--d, 0) * 80ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  [data-reveal] { opacity: 0; transform: translateY(14px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  [data-reveal].in { opacity: 1; transform: none; }
+  .live .summary, .live .checks li { animation: fadeIn .35s var(--ease) both; animation-delay: calc(var(--i, 0) * 35ms); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .sk { animation: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="#top" aria-label="checkemail home">
+      <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span>
+      <span class="logo-word">checkemail</span>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#demo">Live Demo</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#docker">Docker API</a></li>
+      <li><a href="#edge">Cloudflare / Edge Deploy</a></li>
+      <li><a href="https://github.com/SaiAkashNeela/checkemail-dev#readme">Docs</a></li>
+    </ul>
+    <div class="nav-end">
+      <a class="star" href="https://github.com/SaiAkashNeela/checkemail-dev" aria-label="Star checkemail on GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i>Star<span class="star-count" id="stars"></span></a>
+      <a class="icon-btn npm-link" href="https://www.npmjs.com/package/checkemail" aria-label="checkemail on npm"><span class="brand-mark bm-npm" aria-hidden="true"></span></a>
+      <button class="icon-btn" id="theme" type="button" aria-label="Toggle color theme"><i class="ph ph-moon" aria-hidden="true"></i></button>
+      <button class="icon-btn menu-btn" id="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><i class="ph ph-list" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div class="intro-col">
+        <p class="byline rise"><img src="https://avatars.githubusercontent.com/u/58844245?s=64&amp;v=4" alt="" width="22" height="22">By <a href="https://github.com/SaiAkashNeela">Sai Akash Neela</a> (@saiakashneela)</p>
+        <h1 class="rise" style="--d:1">Email validation with <span>zero dependencies.</span></h1>
+        <p class="lede rise" style="--d:2">Check syntax, MX records, disposable domains and aliases. Free, open source, and nothing leaves your servers.</p>
+        <div class="install rise" style="--d:3">
+          <div class="cmd"><span class="p" aria-hidden="true">$</span><code>npm i checkemail</code><button class="copy" type="button" data-copy="npm i checkemail" aria-label="Copy install command"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
+          <p class="alt">Not using Node.js? <a href="#docker">Run it with Docker</a></p>
+        </div>
+        <div class="hero-actions rise" style="--d:4">
+          <a class="btn btn-ghost" href="https://github.com/SaiAkashNeela/checkemail-dev"><i class="ph ph-github-logo" aria-hidden="true"></i>View on GitHub</a>
+        </div>
+      </div>
+
+      <div class="demo-col rise" style="--d:2">
+        <div class="demo" id="demo">
+          <form id="form" novalidate>
+            <label for="email">Try any email address</label>
+            <div class="field">
+              <input id="email" name="email" type="text" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="name@example.com" aria-describedby="email-help">
+              <button class="btn btn-primary" type="submit" id="go">Check</button>
+            </div>
+            <div class="examples" aria-label="Example addresses">
+              <span>Try:</span>
+              <button type="button" class="chip" data-ex="john.doe+test@gmail.com">john.doe+test@gmail.com</button>
+              <button type="button" class="chip" data-ex="temp@mailinator.com">temp@mailinator.com</button>
+              <button type="button" class="chip" data-ex="support@github.com">support@github.com</button>
+            </div>
+            <p class="help" id="email-help">Runs in your browser. Only the domain is looked up. Nothing is stored.</p>
+          </form>
+          <div id="out" aria-live="polite"><noscript><p class="help" style="padding:0 20px 20px">The live demo needs JavaScript.</p></noscript></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="features">
+    <div class="wrap">
+      <h2 data-reveal>How it works</h2>
+      <p class="sub" data-reveal>Four quick steps, cheapest first. Bad addresses stop early.</p>
+      <ol class="steps" data-reveal>
+        <li><span class="ico"><i class="ph ph-lightning" aria-hidden="true"></i></span><h3>Instant local checks</h3><p>Format, 9,000+ disposable domains and role inboxes like <code>support@</code> are checked with no network call.</p></li>
+        <li><span class="ico"><i class="ph ph-globe-simple" aria-hidden="true"></i></span><h3>DNS and mail server</h3><p>Confirms the domain exists and has MX records, so it can actually receive mail.</p></li>
+        <li><span class="ico"><i class="ph ph-fingerprint" aria-hidden="true"></i></span><h3>Provider and aliases</h3><p>Spots Gmail, Outlook, Proton and more, and turns <code>john.doe+test@gmail.com</code> into <code>johndoe@gmail.com</code>.</p></li>
+        <li><span class="ico"><i class="ph ph-gauge" aria-hidden="true"></i></span><h3>Confidence score</h3><p>Every signal adds up to a 0 to 100 score with a clear status like <code>LIKELY</code> or <code>DISPOSABLE</code>.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="block" id="why">
+    <div class="wrap why">
+      <div data-reveal>
+        <h2>Zero dependencies. Zero monthly fees.</h2>
+        <p class="sub">Paid email APIs see every address you send and bill per check. checkemail is a library you run yourself.</p>
+      </div>
+      <ul class="points" data-reveal>
+        <li><i class="ph ph-lock-key" aria-hidden="true"></i><div><h3>Private</h3><p>Addresses never leave your servers. Only the domain is looked up in DNS, and nothing is tracked.</p></div></li>
+        <li><i class="ph ph-currency-circle-dollar" aria-hidden="true"></i><div><h3>Free forever</h3><p>MIT licensed. No API keys, no plans, no per-check fees.</p></div></li>
+        <li><i class="ph ph-package" aria-hidden="true"></i><div><h3>No dependencies</h3><p>Uses the DNS module built into Node.js. Nothing else to install or audit.</p></div></li>
+        <li><i class="ph ph-arrows-clockwise" aria-hidden="true"></i><div><h3>Always up to date</h3><p>The disposable list is refreshed every Monday and Thursday by a GitHub Action.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="integrate">
+    <span class="anchor" id="docker"></span><span class="anchor" id="edge"></span>
+    <div class="wrap">
+      <h2 data-reveal>Use it anywhere</h2>
+      <p class="sub" data-reveal>Import it in JavaScript, deploy it to the edge, or call it over HTTP from any language.</p>
+      <div class="stack" data-reveal>
+        <div class="tabs" role="tablist" aria-label="Integration">
+          <button role="tab" id="t-node" aria-selected="true" aria-controls="p-node"><span class="brand-mark bm-node" aria-hidden="true"></span>Node.js / Bun</button>
+          <button role="tab" id="t-http" aria-selected="false" aria-controls="p-http" tabindex="-1"><span class="brand-mark bm-docker" aria-hidden="true"></span>Docker API</button>
+          <button role="tab" id="t-worker" aria-selected="false" aria-controls="p-worker" tabindex="-1"><span class="brand-mark bm-cloudflare" aria-hidden="true"></span>Cloudflare Workers</button>
+        </div>
+
+        <div role="tabpanel" id="p-node" aria-labelledby="t-node">
+          <div class="panel-bar"><span>index.mjs</span><button class="copy" type="button" data-copy-from="c-node" aria-label="Copy code"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
+<pre class="code"><code id="c-node" data-lang="js">import { validateEmail } from 'checkemail';
+
+const { confidence } = await validateEmail('john.doe+test@gmail.com');
+console.log(confidence.status, confidence.canonical_email); // LIKELY johndoe@gmail.com</code></pre>
+          <p class="note">Node.js 18+ or Bun. TypeScript types included.</p>
+        </div>
+
+        <div role="tabpanel" id="p-http" aria-labelledby="t-http" hidden>
+          <div class="panel-bar"><span>terminal</span><button class="copy" type="button" data-copy-from="c-docker" aria-label="Copy command"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
+<pre class="code"><code id="c-docker" data-lang="sh">docker run -p 3000:3000 saiakashneela/checkemail</code></pre>
+          <div class="panel-bar">
+            <div class="langs" role="tablist" aria-label="HTTP client language">
+              <button role="tab" id="t-curl" aria-selected="true" aria-controls="p-curl">curl</button>
+              <button role="tab" id="t-py" aria-selected="false" aria-controls="p-py" tabindex="-1">Python</button>
+              <button role="tab" id="t-go" aria-selected="false" aria-controls="p-go" tabindex="-1">Go</button>
+              <button role="tab" id="t-cs" aria-selected="false" aria-controls="p-cs" tabindex="-1">.NET</button>
+              <button role="tab" id="t-java" aria-selected="false" aria-controls="p-java" tabindex="-1">Java</button>
+            </div>
+            <button class="copy" type="button" data-copy-active="p-http" aria-label="Copy code"><i class="ph ph-copy" aria-hidden="true"></i></button>
+          </div>
+<pre class="code" role="tabpanel" id="p-curl" aria-labelledby="t-curl"><code data-lang="sh">curl "http://localhost:3000/validate?email=john.doe%2Btest@gmail.com"</code></pre>
+<pre class="code" role="tabpanel" id="p-py" aria-labelledby="t-py" hidden><code data-lang="py">import requests
+
+r = requests.get('http://localhost:3000/validate', params={'email': 'john@gmail.com'})
+print(r.json()['confidence']['status'])</code></pre>
+<pre class="code" role="tabpanel" id="p-go" aria-labelledby="t-go" hidden><code data-lang="go">resp, err := http.Get("http://localhost:3000/validate?email=" + url.QueryEscape("john@gmail.com"))
+if err != nil {
+	log.Fatal(err)
+}
+defer resp.Body.Close()
+
+var result map[string]any
+json.NewDecoder(resp.Body).Decode(&amp;result)
+fmt.Println(result["confidence"])</code></pre>
+<pre class="code" role="tabpanel" id="p-cs" aria-labelledby="t-cs" hidden><code data-lang="cs">using System.Net.Http.Json;
+using System.Text.Json;
+
+using var http = new HttpClient();
+var result = await http.GetFromJsonAsync&lt;JsonElement&gt;(
+    $"http://localhost:3000/validate?email={Uri.EscapeDataString("john@gmail.com")}");
+Console.WriteLine(result.GetProperty("confidence").GetProperty("status"));</code></pre>
+<pre class="code" role="tabpanel" id="p-java" aria-labelledby="t-java" hidden><code data-lang="java">var email = URLEncoder.encode("john@gmail.com", StandardCharsets.UTF_8);
+var request = HttpRequest.newBuilder()
+    .uri(URI.create("http://localhost:3000/validate?email=" + email))
+    .build();
+var response = HttpClient.newHttpClient()
+    .send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body());</code></pre>
+          <p class="note">Endpoints: <code>GET /validate?email=</code> and <code>GET /health</code>. Port set by <code>PORT</code> (default 3000), CORS open for GET. Try it with this page: <a href="?api=http://localhost:3000#demo">?api=http://localhost:3000</a></p>
+        </div>
+
+        <div role="tabpanel" id="p-worker" aria-labelledby="t-worker" hidden>
+          <div class="panel-bar"><span>terminal</span><button class="copy" type="button" data-copy-from="c-deploy" aria-label="Copy commands"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
+<pre class="code"><code id="c-deploy" data-lang="sh">git clone https://github.com/SaiAkashNeela/checkemail-dev
+cd checkemail-dev/website
+npx wrangler deploy</code></pre>
+          <div class="panel-bar"><span>website/functions/index.ts</span><button class="copy" type="button" data-copy-from="c-worker" aria-label="Copy code"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
+<pre class="code"><code id="c-worker" data-lang="ts">import { validateEmail } from './edge';
+
+export default {
+  async fetch(req: Request) {
+    const email = new URL(req.url).searchParams.get('email') ?? '';
+    return Response.json(await validateEmail(email));
+  },
+};</code></pre>
+          <p class="note">Deploys this site plus <code>GET /api/validate?email=</code> on the Workers free plan. DNS goes over HTTPS to 1.1.1.1; the domain lists are bundled into the Worker.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ: mirrored 1:1 in the FAQPage JSON-LD above. Edit both together. -->
+  <section class="block" id="faq">
+    <div class="wrap faq-wrap">
+      <h2 data-reveal>Questions</h2>
+      <div class="faq" data-reveal>
+        <details><summary>Does checkemail confirm that a mailbox exists?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>No. checkemail never opens an SMTP connection or sends a RCPT probe. It verifies syntax, that the domain resolves in DNS, and that it publishes MX records, then scores the address. <code>LIKELY</code> means the domain can receive mail; it does not prove the individual mailbox exists.</p></details>
+        <details><summary>How does checkemail detect disposable email addresses?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>It matches the domain exactly against the community-maintained <a href="https://github.com/disposable-email-domains/disposable-email-domains">disposable-email-domains</a> blocklist (9,000+ domains). The package republishes with a fresh copy every Monday and Thursday via GitHub Actions. A disposable match returns status <code>DISPOSABLE</code> with score 0 before any DNS lookup.</p></details>
+        <details><summary>How does checkemail handle Gmail aliases like john.doe+test@gmail.com?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>It strips the <code>+tag</code>, removes dots from the local part and folds <code>googlemail.com</code> into <code>gmail.com</code>. <code>john.doe+test@gmail.com</code> returns <code>alias_status: ALIAS_CONFIRMED</code> and <code>canonical_email: johndoe@gmail.com</code>, so you can detect repeat signups.</p></details>
+        <details><summary>Which email providers can checkemail identify?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Gmail, Microsoft consumer (Outlook, Hotmail, Live, MSN), iCloud, Proton Mail, Yahoo, Fastmail, Zoho Mail, Yandex Mail and Google Groups from the domain. Custom domains hosted on Google Workspace or Microsoft 365 are detected from their MX and SPF records.</p></details>
+        <details><summary>Can I use checkemail from Python, Go, Java, .NET or PHP?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. Run the Docker image (<code>docker run -p 3000:3000 saiakashneela/checkemail</code>) and call <code>GET /validate?email=</code> from any HTTP client. The response is the same JSON the Node.js package returns.</p></details>
+        <details><summary>Does checkemail run on Cloudflare Workers or in the browser?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. The repository includes an edge build that resolves DNS over HTTPS through Cloudflare's 1.1.1.1 and deploys with <code>npx wrangler deploy</code>. The demo on checkemail.dev runs the same logic directly in the browser.</p></details>
+        <details><summary>What does the checkemail confidence score mean?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Any status other than <code>LIKELY</code> scores 0. Otherwise points are summed: +20 domain resolves, +20 MX records, +20 not disposable, +20 no alias signals (+10 alias possible, -5 alias confirmed), +10 not a role inbox. A clean personal address scores 90.</p></details>
+        <details><summary>Is checkemail free for commercial use?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. checkemail is MIT licensed, has no API keys, no per-check pricing and no usage tiers.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <p class="credit">Created and maintained by <a href="https://github.com/SaiAkashNeela">Sai Akash Neela</a> <span>(saiakashneela)</span></p>
+        <p class="license">MIT License. 100% free for commercial and personal use.</p>
+      </div>
+      <div>
+        <h4>Project</h4>
+        <ul>
+          <li><a href="https://github.com/SaiAkashNeela/checkemail-dev"><i class="ph ph-github-logo" aria-hidden="true"></i>GitHub repository</a></li>
+          <li><a href="https://www.npmjs.com/package/checkemail"><span class="brand-mark bm-npm" aria-hidden="true"></span>npm registry</a></li>
+          <li><a href="https://hub.docker.com/r/saiakashneela/checkemail"><span class="brand-mark bm-docker" aria-hidden="true"></span>Docker Hub</a></li>
+          <li><a href="https://github.com/SaiAkashNeela/checkemail-dev/issues"><i class="ph ph-bug" aria-hidden="true"></i>Issue tracker</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul>
+          <li><a href="https://github.com/SaiAkashNeela"><i class="ph ph-github-logo" aria-hidden="true"></i>@SaiAkashNeela</a></li>
+          <li><a href="https://www.saiakashneela.com"><i class="ph ph-globe-simple" aria-hidden="true"></i>saiakashneela.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine"><span>&copy; 2026 Sai Akash Neela</span><a href="#top">Back to top</a></div>
+  </div>
+</footer>
+
+<!-- Generated from data/*.txt by website/scripts/sync-lists.mjs -->
+<script type="application/json" id="lists">{"role":["support","help","service","info","contact","hello","admin","administrator","manager","office","sales","business","deals","marketing","press","media","hr","jobs","careers","abuse","security","compliance","privacy","legal","dmca","fraud","trust","billing","accounts","accounting","finance","payments","invoices","monitoring","uptime","status","health","heartbeat","cron","scheduler","workers","ux","ui","design","designers","research","usability","productops","roadmap","discovery","relations","stakeholders","investors","ir","shareholders","pr","publicaffairs","government","policy","seo","content","copy","brand","branding","social","socialmedia","influencers","affiliates","campaigns","promotions","internal","intranet","backoffice","operations","enablement","facilities","workplace","customersuccess","cs","cx","onboarding","implementations","adoption","feedback","reviews","voice","experience","revenue","growth","monetization","subscriptions","pricing","plans","upsell","renewals","retention","churn","contracts","licensing","copyright","ip","intellectualproperty","governance","ethics","whistleblower","ombudsman","data","datascience","ml","ai","analytics","insights","bi","lab","labs","experiments","platform","backend","frontend","mobile","ios","android","qa","quality","testing","release","build","ci","cd","devops","sre","reliability","cloud","kubernetes","k8s","containers","soc","cert","incident","vuln","vulnerabilities","bugbounty","bugs","risk","assurance","forensics","payroll","tax","it","tech","engineering","dev","developer","developers","ops","sysadmin","adminteam","infrastructure","orders","order","shipping","returns","logistics","warehouse","fulfillment","product","products","newsletter","news","announcements","updates","alerts","notifications","broadcast","community","events","ceo","cto","cfo","coo","founder","founders","leadership","management","board","directors","training","learning","education","academy","students","admissions","courses","noreply","no-reply","do-not-reply","donotreply","automated","system","systems","mailer","mail","robot","bot","partners","partnerships","alliances","vendors","suppliers","procurement","sourcing","team","staff","everyone","all","group","hq","global","postmaster","hostmaster","webmaster","root","tickets","chief","executive","exec","lead","head","chairman","chair","president","vp","svp","evp","ar","ap","receivables","collections","treasury","controller","bookkeeping","bookkeeper","legalteam","lawyer","counsel","dataprotection","dpo","gdpr","riskteam","regulatory","compliance-team","eng","engineers","devteam","backend-team","frontend-team","mobile-team","platform-team","infra","infra-team","qatest","qa-team","testers","release-team","staging","preprod","sandbox","data-team","analytics-team","ml-team","ai-team","research-team","science","experimentation","salesops","revops","commerce","ecommerce","store","shop","purchases","purchase","users","user","members","membership","accounts-team","support-team","helpdesk","servicedesk","demand","demandgen","performance","paid","ads","advertising","growth-team","marketingops","product-team","pm","pms","productmanager","product-owner","ux-team","ui-team","design-team","people","peopleops","culture","talent","talentops","hr-team","workforce","auto","autobot","notifications-team","events-team","dispatch","queue","pipeline","dns","abuse-team","noc","network","netops","beta","earlyaccess","preview","labs-team","innovation","future","api","webhook","webhooks","receipt","receipts","invoice","confirmation","confirmations","subscribe","unsubscribe","verify","verification","activate","activation","bounce","bounces","mailer-daemon","maildaemon","daemon","ping","replies","reply","hi","hey","general","enquiries","enquiry","queries","query","request","requests"],"consumer":["gmail.com","googlemail.com","outlook.com","outlook.co.uk","outlook.fr","outlook.de","outlook.com.au","live.com","live.co.uk","live.fr","live.com.au","hotmail.com","hotmail.co.uk","hotmail.fr","hotmail.de","msn.com","icloud.com","me.com","mac.com","yahoo.com","yahoo.co.uk","yahoo.co.in","yahoo.fr","yahoo.de","yahoo.com.au","yahoo.com.ar","yahoo.com.br","yahoo.com.mx","yahoo.es","yahoo.it","yahoo.ca","ymail.com","rocketmail.com","proton.me","protonmail.com","pm.me","protonmail.ch","tuta.com","tuta.io","tutanota.com","tutanota.de","tutamail.com","keemail.me","fastmail.com","fastmail.fm","fastmail.to","fastmail.net","fastmail.org","fastmail.in","fastmail.us","fastmail.cn","fastmail.es","fastmail.de","fastmail.jp","zoho.com","zohomail.com","yandex.com","yandex.ru","yandex.ua","yandex.by","yandex.kz","ya.ru","gmx.com","gmx.de","gmx.net","gmx.at","gmx.ch","gmx.fr","gmx.us","gmx.co.uk","mail.com","inbox.com","email.com","usa.com","myself.com","consultant.com","post.com","techie.com","writeme.com","aol.com","aim.com","verizon.net","att.net","sbcglobal.net","bellsouth.net","cox.net","charter.net","comcast.net","optonline.net","earthlink.net","mailbox.org","posteo.de","disroot.org","riseup.net","startmail.com","mailfence.com","hey.com","ik.me","privaterelay.appleid.com"]}</script>
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  /* ---------- Theme ---------- */
+  const root = document.documentElement;
+  const themeBtn = $('#theme');
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+  };
+  const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const paintThemeIcon = () => { themeBtn.innerHTML = `<i class="ph ${isDark() ? 'ph-sun' : 'ph-moon'}" aria-hidden="true"></i>`; };
+  const saved = store.get('theme');
+  if (saved === 'light' || saved === 'dark') root.dataset.theme = saved;
+  paintThemeIcon();
+  themeBtn.addEventListener('click', () => { root.dataset.theme = isDark() ? 'light' : 'dark'; store.set('theme', root.dataset.theme); paintThemeIcon(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', paintThemeIcon);
+
+  /* ---------- Mobile menu ---------- */
+  const nav = $('#nav'), menu = $('#menu');
+  menu.addEventListener('click', () => menu.setAttribute('aria-expanded', nav.classList.toggle('open')));
+  $$('#nav-links a').forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); }));
+
+  /* ---------- Tabs ---------- */
+  $$('[role="tablist"]').forEach(list => {
+    const tabs = $$(':scope > [role="tab"]', list);
+    const select = (tab, focus) => {
+      tabs.forEach(t => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', e => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (step) { e.preventDefault(); select(tabs[(i + step + tabs.length) % tabs.length], true); }
+        if (e.key === 'Home') { e.preventDefault(); select(tabs[0], true); }
+        if (e.key === 'End') { e.preventDefault(); select(tabs[tabs.length - 1], true); }
+      });
+    });
+  });
+  // #docker and #edge land on the matching integration tab
+  const TAB_FOR_HASH = { '#docker': 't-http', '#edge': 't-worker' };
+  const syncTab = () => { const id = TAB_FOR_HASH[location.hash]; if (id) document.getElementById(id).click(); };
+  window.addEventListener('hashchange', syncTab);
+  syncTab();
+
+  /* ---------- Copy ---------- */
+  const copyText = async text => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove(); return ok;
+    }
+  };
+  $$('.copy').forEach(btn => btn.addEventListener('click', async () => {
+    let text = btn.dataset.copy;
+    if (btn.dataset.copyFrom) text = document.getElementById(btn.dataset.copyFrom).textContent;
+    if (btn.dataset.copyActive) text = $(`#${btn.dataset.copyActive} pre[role="tabpanel"]:not([hidden]) code`).textContent;
+    if (!(await copyText(text))) return;
+    const label = btn.getAttribute('aria-label');
+    btn.classList.add('done');
+    btn.innerHTML = '<i class="ph ph-check" aria-hidden="true"></i>';
+    btn.setAttribute('aria-label', 'Copied');
+    setTimeout(() => { btn.classList.remove('done'); btn.innerHTML = '<i class="ph ph-copy" aria-hidden="true"></i>'; btn.setAttribute('aria-label', label); }, 1600);
+  }));
+
+  /* ---------- Syntax highlight (tiny, token-level) ---------- */
+  const KW = new Set(['import', 'from', 'const', 'let', 'var', 'await', 'async', 'export', 'default', 'return', 'new', 'if', 'defer', 'using', 'nil']);
+  const STR = String.raw`"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|` + '`(?:[^`\\\\]|\\\\.)*`';
+  const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  $$('code[data-lang]').forEach(el => {
+    const src = el.textContent;
+    const comment = ['py', 'sh'].includes(el.dataset.lang) ? '#[^\\n]*' : '\\/\\/[^\\n]*';
+    const re = new RegExp(`(${comment})|(${STR})|\\b([A-Za-z_]\\w*)\\b`, 'g');
+    let out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      last = m.index + m[0].length;
+      if (m[1]) out += `<span class="t-c">${esc(m[0])}</span>`;
+      else if (m[2]) out += `<span class="t-s">${esc(m[0])}</span>`;
+      else if (KW.has(m[3])) out += `<span class="t-k">${m[0]}</span>`;
+      else out += esc(m[0]);
+    }
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  /* ---------- Reveal on scroll ---------- */
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+    $$('[data-reveal]').forEach(el => io.observe(el));
+  } else {
+    $$('[data-reveal]').forEach(el => el.classList.add('in'));
+  }
+
+  /* ---------- GitHub stars (hidden if the API is unavailable) ---------- */
+  fetch('https://api.github.com/repos/SaiAkashNeela/checkemail-dev', { headers: { accept: 'application/vnd.github+json' } })
+    .then(r => r.ok ? r.json() : null)
+    .then(d => {
+      if (!d || typeof d.stargazers_count !== 'number') return;
+      const n = d.stargazers_count;
+      $('#stars').textContent = n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
+    })
+    .catch(() => {});
+
+  /* Browser engine: a port of src/ (same as website/functions/edge.ts). DNS goes over
+     HTTPS to Cloudflare (Google as fallback); only the domain ever leaves the page. */
+  const Browser = (() => {
+    const LOCAL_RE = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/;
+    const QUOTED_LOCAL_RE = /^"[^"\\]*(?:\\.[^"\\]*)*"$/;
+    const DOMAIN_RE = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+    const checkSyntax = email => {
+      if (!email || email.length > 254) return false;
+      const at = email.lastIndexOf('@');
+      if (at < 1) return false;
+      const local = email.slice(0, at), domain = email.slice(at + 1);
+      if (local.length > 64 || !domain) return false;
+      return (LOCAL_RE.test(local) || QUOTED_LOCAL_RE.test(local)) && DOMAIN_RE.test(domain);
+    };
+
+    const toSet = list => new Set(list.map(l => l.trim().toLowerCase()).filter(l => l && !l.startsWith('#')));
+    const lists = JSON.parse(document.getElementById('lists').textContent);
+    const ROLE_SET = toSet(lists.role), CONSUMER = toSet(lists.consumer);
+    const GMAIL = new Set(['gmail.com', 'googlemail.com']);
+    const PROTON = new Set(['proton.me', 'protonmail.com', 'pm.me', 'protonmail.ch']);
+    const MS = new Set(['outlook.com', 'live.com', 'hotmail.com', 'msn.com']);
+    const APPLE = new Set(['icloud.com', 'me.com', 'mac.com']);
+    const YAHOO = new Set(['yahoo.com', 'yahoo.co.uk', 'yahoo.co.in', 'ymail.com', 'rocketmail.com']);
+    const FASTMAIL = new Set(['fastmail.com', 'fastmail.fm']);
+    const ZOHO = new Set(['zoho.com', 'zohomail.com']);
+    const YANDEX = new Set(['yandex.com', 'yandex.ru', 'yandex.ua']);
+
+    // The published package's own list first; the upstream community list if npm is unreachable
+    const DISPOSABLE_SOURCES = [
+      'https://cdn.jsdelivr.net/npm/checkemail/data/disposable.txt',
+      'https://cdn.jsdelivr.net/gh/disposable-email-domains/disposable-email-domains@main/disposable_email_blocklist.conf',
+    ];
+    let disposable = null;
+    const loadDisposable = () => disposable || (disposable = (async () => {
+      for (const url of DISPOSABLE_SOURCES) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          const set = toSet((await res.text()).split('\n'));
+          if (set.size > 1000) return set;
+        } catch {}
+      }
+      disposable = null;
+      throw new Error('Could not load the disposable domain list');
+    })());
+
+    const DOH = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/resolve'];
+    const cache = new Map();
+    async function query(name, type) {
+      const key = type + ':' + name;
+      if (cache.has(key)) return cache.get(key);
+      for (const base of DOH) {
+        try {
+          const res = await fetch(`${base}?name=${encodeURIComponent(name)}&type=${type}`, { headers: { accept: 'application/dns-json' } });
+          if (!res.ok) continue;
+          const body = await res.json();
+          const answers = body.Status === 0 ? (body.Answer || []) : [];
+          cache.set(key, answers);
+          return answers;
+        } catch {}
+      }
+      throw new Error('DNS over HTTPS is unreachable from this browser');
+    }
+    const stripDot = s => s.replace(/\.$/, '').toLowerCase();
+    const lookupA = async d => {
+      const ans = await query(d, 'A');
+      const a = ans.filter(r => r.type === 1).map(r => r.data);
+      return { exists: a.length > 0, a, cname: ans.filter(r => r.type === 5).map(r => stripDot(r.data)) };
+    };
+    const lookupMx = async d => {
+      const mx = (await query(d, 'MX')).filter(r => r.type === 15).map(r => {
+        const [p, ex] = r.data.split(/\s+/);
+        return { priority: Number(p), exchange: stripDot(ex || '') };
+      }).filter(r => r.exchange).sort((x, y) => x.priority - y.priority); // drop null MX ("0 .")
+      return { hasMx: mx.length > 0, mx };
+    };
+    const lookupSpf = async d => {
+      try {
+        return (await query(d, 'TXT')).filter(r => r.type === 16)
+          .map(r => r.data.replace(/"\s*"/g, '').replace(/^"|"$/g, '')).join(' ').toLowerCase();
+      } catch { return ''; }
+    };
+
+    async function classify(email, exchangesP) {
+      const at = email.lastIndexOf('@');
+      const local = email.slice(0, at).toLowerCase().trim();
+      const domain = email.slice(at + 1).toLowerCase().trim();
+      if (domain === 'googlegroups.com') {
+        return { is_role_based: true, alias_status: 'MAYBE_NOT_ALIAS', canonical_email: null, provider: 'GOOGLE_GROUPS', provider_name: 'Google Groups' };
+      }
+      const is_role_based = !CONSUMER.has(domain) && ROLE_SET.has(local);
+      let provider = 'UNKNOWN', provider_name = null;
+      if (GMAIL.has(domain)) [provider, provider_name] = ['GMAIL', 'Gmail'];
+      else if (PROTON.has(domain)) [provider, provider_name] = ['PROTON', 'Proton Mail'];
+      else if (MS.has(domain)) [provider, provider_name] = ['MICROSOFT_CONSUMER', 'Microsoft'];
+      else if (APPLE.has(domain)) [provider, provider_name] = ['APPLE_ICLOUD', 'iCloud'];
+      else if (YAHOO.has(domain)) [provider, provider_name] = ['YAHOO', 'Yahoo'];
+      else if (FASTMAIL.has(domain)) [provider, provider_name] = ['FASTMAIL', 'Fastmail'];
+      else if (ZOHO.has(domain)) [provider, provider_name] = ['ZOHO', 'Zoho Mail'];
+      else if (YANDEX.has(domain)) [provider, provider_name] = ['YANDEX', 'Yandex Mail'];
+      else {
+        const ex = await exchangesP;
+        let detected = null;
+        if (ex.some(x => x.endsWith('google.com') || x.endsWith('googlemail.com') || x.endsWith('gmail.com'))) detected = 'GOOGLE_WORKSPACE';
+        else if (ex.some(x => x.endsWith('outlook.com'))) detected = 'MICROSOFT_365';
+        else {
+          const spf = await lookupSpf(domain);
+          if (spf.includes('_spf.google.com')) detected = 'GOOGLE_WORKSPACE';
+          else if (spf.includes('spf.protection.outlook.com')) detected = 'MICROSOFT_365';
+        }
+        if (detected === 'GOOGLE_WORKSPACE') [provider, provider_name] = ['GOOGLE_WORKSPACE', 'Google Workspace'];
+        else if (detected === 'MICROSOFT_365') [provider, provider_name] = ['MICROSOFT_365', 'Microsoft 365'];
+      }
+
+      let alias = 'MAYBE_NOT_ALIAS', realLocal = local, canonicalDomain = domain, equivalent = [];
+      if (provider === 'PROTON') { canonicalDomain = 'protonmail.com'; equivalent = [...PROTON]; }
+      else if (provider === 'GMAIL') { canonicalDomain = 'gmail.com'; equivalent = [...GMAIL]; }
+      else if (provider === 'APPLE_ICLOUD') { canonicalDomain = 'icloud.com'; equivalent = [...APPLE]; }
+
+      if (local.includes('+')) {
+        if (['GMAIL', 'MICROSOFT_CONSUMER', 'APPLE_ICLOUD', 'PROTON', 'YAHOO', 'FASTMAIL', 'ZOHO'].includes(provider)) { realLocal = local.split('+')[0]; alias = 'ALIAS_CONFIRMED'; }
+        else if (['GOOGLE_WORKSPACE', 'MICROSOFT_365'].includes(provider)) { realLocal = local.split('+')[0]; alias = 'ALIAS_POSSIBLE'; }
+        else alias = 'ALIAS_UNKNOWN';
+      }
+      if (['GMAIL', 'PROTON'].includes(provider)) {
+        const stripped = realLocal.replace(/\./g, '');
+        if (stripped !== realLocal) { realLocal = stripped; if (alias === 'MAYBE_NOT_ALIAS') alias = 'ALIAS_CONFIRMED'; }
+      } else if (provider === 'GOOGLE_WORKSPACE' && realLocal.includes('.')) {
+        realLocal = realLocal.replace(/\./g, '');
+        if (alias === 'MAYBE_NOT_ALIAS') alias = 'ALIAS_POSSIBLE';
+      }
+      let canonical_email = null;
+      if (realLocal !== local || canonicalDomain !== domain) {
+        canonical_email = `${realLocal}@${canonicalDomain}`;
+        if (canonicalDomain !== domain && alias === 'MAYBE_NOT_ALIAS') alias = 'ALIAS_CONFIRMED';
+      }
+      return { is_role_based, alias_status: alias, canonical_email, provider, provider_name, equivalent_domains: equivalent.length ? equivalent : undefined };
+    }
+
+    // Mirrors src/score.ts
+    function score({ domain_exists, mx_records, is_disposable, is_role_based, alias_status, status }) {
+      if (status !== 'LIKELY' || is_disposable || !domain_exists || !mx_records) return 0;
+      let s = 60;
+      if (alias_status === 'MAYBE_NOT_ALIAS') s += 20;
+      else if (alias_status === 'ALIAS_POSSIBLE') s += 10;
+      else if (alias_status === 'ALIAS_CONFIRMED') s -= 5;
+      if (!is_role_based) s += 10;
+      return Math.max(0, Math.min(100, s));
+    }
+
+    const early = (email, start, disp) => ({
+      email,
+      validations: { syntax: disp, domain_exists: disp, mx_records: disp, is_disposable: disp },
+      confidence: { score: 0, status: disp ? 'DISPOSABLE' : 'INVALID_FORMAT', is_role_based: false, alias_status: 'MAYBE_NOT_ALIAS', canonical_email: null },
+      provider: null,
+      meta: { latency_ms: Math.round(performance.now() - start) },
+      records: null,
+    });
+
+    async function validate(raw) {
+      const listP = loadDisposable();
+      const start = performance.now();
+      const email = raw.trim().replace(/ /g, '+').toLowerCase();
+      if (!checkSyntax(email)) return early(email, start, false);
+      const domain = email.split('@')[1];
+      const list = await listP;
+      const t0 = performance.now(); // don't bill the one-time list download to this check
+      if (list.has(domain)) return early(email, t0, true);
+
+      const aP = lookupA(domain), mxP = lookupMx(domain);
+      const [a, mx, cls] = await Promise.all([aP, mxP, classify(email, mxP.then(m => m.mx.map(r => r.exchange)))]);
+      let status = 'LIKELY';
+      if (!a.exists) status = 'INVALID_DOMAIN';
+      else if (!mx.hasMx) status = 'NO_MX_RECORDS';
+      if (status !== 'LIKELY') { cls.is_role_based = false; cls.alias_status = 'MAYBE_NOT_ALIAS'; cls.canonical_email = null; }
+      const confidence = {
+        score: score({ domain_exists: a.exists, mx_records: mx.hasMx, is_disposable: false, is_role_based: cls.is_role_based, alias_status: cls.alias_status, status }),
+        status, is_role_based: cls.is_role_based, alias_status: cls.alias_status, canonical_email: cls.canonical_email,
+      };
+      if (cls.equivalent_domains) confidence.equivalent_domains = cls.equivalent_domains;
+      return {
+        email,
+        validations: { syntax: true, domain_exists: a.exists, mx_records: mx.hasMx, is_disposable: false },
+        confidence,
+        provider: cls.provider !== 'UNKNOWN' ? { id: cls.provider, name: cls.provider_name } : null,
+        meta: { latency_ms: Math.round(performance.now() - t0) },
+        records: { a: a.a, cname: a.cname, mx: mx.mx },
+      };
+    }
+    return { validate, warm: () => loadDisposable().catch(() => {}) };
+  })();
+
+  /* Engine selection:
+       ?api=http://localhost:3000  -> that HTTP API (Docker or any deployed Worker)
+       served by the Worker        -> same-origin /api (detected via /api/health)
+       anywhere else               -> the browser engine above */
+  const params = new URLSearchParams(location.search);
+  const apiParam = params.get('api');
+  const help = $('#email-help');
+  const httpEngine = (base, label) => ({
+    label,
+    async validate(email, signal) {
+      const res = await fetch(`${base}/validate?email=${encodeURIComponent(email)}`, { signal });
+      const body = await res.json().catch(() => null);
+      if (!res.ok || !body || !body.confidence) throw new Error(body?.error || `HTTP ${res.status}`);
+      return body;
+    },
+  });
+  const browserEngine = { label: 'your browser', validate: email => Browser.validate(email) };
+  let engine = browserEngine;
+  const engineReady = (async () => {
+    if (apiParam) {
+      const base = apiParam.replace(/\/+$/, '');
+      engine = httpEngine(base, new URL(base, location.href).host);
+      help.textContent = `Checked by the API at ${engine.label}. Nothing is stored.`;
+      return;
+    }
+    if (!location.protocol.startsWith('http')) return;
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 1500);
+      const res = await fetch('/api/health', { signal: ctrl.signal });
+      clearTimeout(t);
+      const body = res.ok ? await res.json() : null;
+      if (body && body.status === 'ok') {
+        engine = httpEngine('/api', 'Cloudflare edge');
+        help.textContent = 'Checked by this site\u2019s Cloudflare Worker at /api/validate. Nothing is stored.';
+      }
+    } catch {}
+  })();
+
+
+
+  const form = $('#form'), input = $('#email'), out = $('#out'), go = $('#go');
+
+  const STATUS = {
+    LIKELY: { good: true, text: 'Looks good. This domain accepts mail.' },
+    DISPOSABLE: { good: false, text: 'Throwaway address from a disposable provider.' },
+    INVALID_DOMAIN: { good: false, text: 'This domain does not exist.' },
+    NO_MX_RECORDS: { good: false, text: 'This domain cannot receive mail.' },
+    INVALID_FORMAT: { good: false, text: 'This is not a valid email format.' },
+  };
+
+  const h = (tag, attrs = {}, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') el.className = v;
+      else if (k === 'style') el.style.cssText = v;
+      else el.setAttribute(k, v);
+    }
+    for (const kid of kids.flat(Infinity)) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    return el;
+  };
+  const ICON = {
+    pass: ['ph-check-circle ic-pass', 'Pass'], fail: ['ph-x-circle ic-fail', 'Fail'], warn: ['ph-warning-circle ic-warn', 'Heads up'],
+    skip: ['ph-minus-circle ic-skip', 'Skipped'], idle: ['ph-circle ic-idle', 'Waiting'],
+  };
+  const icon = state => h('i', { class: 'ph ' + ICON[state][0], role: 'img', 'aria-label': ICON[state][1] });
+  const code = t => h('code', {}, t);
+  const LABELS = ['Valid format', 'Domain exists', 'Accepts mail (MX)', 'Disposable', 'Team inbox (role)', 'Alias'];
+
+  const row = (i, state, label, value) => h('li', { style: `--i:${i + 1}` }, icon(state), h('span', {}, label), h('span', { class: 'v' }, value ?? ''));
+
+  function renderEmpty() {
+    out.className = '';
+    out.replaceChildren(
+      h('div', { class: 'summary' },
+        h('div', { class: 'score', style: 'color:var(--rule)' }, '--'),
+        h('div', { class: 'sum-text' }, h('span', { class: 'pill pill-idle' }, 'waiting'), h('span', { class: 'sum-meta' }, 'Enter an address to see its score.'))),
+      h('ul', { class: 'checks' }, LABELS.map((l, i) => row(i, 'idle', l, '')))
+    );
+  }
+
+  function renderSkeleton() {
+    out.className = '';
+    out.replaceChildren(
+      h('div', { class: 'summary', 'aria-label': 'Checking' }, h('div', { class: 'sk', style: 'height:44px;width:64px' }), h('div', { style: 'display:grid;gap:8px;flex:1' }, h('div', { class: 'sk', style: 'width:30%' }), h('div', { class: 'sk', style: 'width:60%' }))),
+      h('ul', { class: 'checks' }, LABELS.map((l, i) => h('li', {}, h('div', { class: 'sk', style: 'width:20px;height:20px;border-radius:50%' }), h('span', {}, l), h('div', { class: 'sk', style: 'width:60px' }))))
+    );
+  }
+
+  function renderError(title, ...body) {
+    out.className = '';
+    out.replaceChildren(h('div', { class: 'err', role: 'alert' },
+      h('strong', {}, h('i', { class: 'ph ph-warning-circle', 'aria-hidden': 'true' }), title),
+      body.map(b => h('p', {}, b))));
+  }
+
+  // Mirrors src/score.ts so visitors can see where the number comes from
+  function scoreMath(r) {
+    const v = r.validations, c = r.confidence;
+    if (c.score === 0) return `${c.status} scores 0`;
+    const parts = [];
+    if (v.domain_exists) parts.push(20);
+    if (v.mx_records) parts.push(20);
+    if (!v.is_disposable) parts.push(20);
+    const a = { MAYBE_NOT_ALIAS: 20, ALIAS_POSSIBLE: 10, ALIAS_CONFIRMED: -5 }[c.alias_status];
+    if (a) parts.push(a);
+    if (!c.is_role_based) parts.push(10);
+    const sum = parts.reduce((x, y) => x + y, 0);
+    return sum === c.score ? parts.map((p, i) => (i ? (p < 0 ? ' - ' : ' + ') : '') + Math.abs(p)).join('') + ' = ' + sum : String(c.score);
+  }
+
+  function renderResult(r) {
+    const c = r.confidence, v = r.validations;
+    const st = STATUS[c.status] || { good: false, text: c.status };
+    const early = c.status === 'INVALID_FORMAT' || c.status === 'DISPOSABLE';
+    const reset = c.status !== 'LIKELY';
+    const rec = r.records || null;
+    const latency = typeof r.meta?.latency_ms === 'number' ? `${r.meta.latency_ms} ms` : '';
+    const provider = r.provider ? r.provider.name : null;
+
+    const rows = [
+      [v.syntax ? 'pass' : 'fail', v.syntax ? 'Yes' : 'No'],
+      early ? ['skip', 'Skipped'] : [v.domain_exists ? 'pass' : 'fail', v.domain_exists ? 'Yes' : 'No'],
+      early ? ['skip', 'Skipped'] : [v.mx_records ? 'pass' : 'fail', v.mx_records ? 'Yes' : 'No'],
+      c.status === 'INVALID_FORMAT' ? ['skip', 'Skipped'] : [v.is_disposable ? 'fail' : 'pass', v.is_disposable ? 'Yes' : 'No'],
+      early || reset ? ['skip', 'Skipped'] : [c.is_role_based ? 'warn' : 'pass', c.is_role_based ? 'Yes' : 'No'],
+      early || reset ? ['skip', 'Skipped']
+        : c.alias_status === 'ALIAS_CONFIRMED' ? ['warn', c.canonical_email ? ['Same as ', code(c.canonical_email)] : 'Alias']
+        : c.alias_status === 'MAYBE_NOT_ALIAS' ? ['pass', 'No']
+        : ['warn', c.alias_status === 'ALIAS_POSSIBLE' ? (c.canonical_email ? ['Maybe ', code(c.canonical_email)] : 'Possible alias') : 'Unknown provider'],
+    ];
+
+    const details = [];
+    const add = (k, val) => details.push(h('dt', {}, k), h('dd', {}, val));
+    if (provider) add('Provider', `${provider} (${r.provider.id})`);
+    if (rec) {
+      add('A / CNAME', [...rec.cname.map(n => 'CNAME ' + n), ...rec.a.map(ip => 'A ' + ip)].join(', ') || 'none');
+      add('MX', rec.mx.map(m => `${m.priority} ${m.exchange}`).join(', ') || 'none');
+    }
+    add('Alias status', c.alias_status);
+    if (c.equivalent_domains) add('Same inbox on', c.equivalent_domains.join(', '));
+    add('Score', scoreMath(r));
+    if (latency) add('Checked', `${latency} via ${engine.label}`);
+
+    out.className = 'live';
+    out.replaceChildren(
+      h('div', { class: 'summary' },
+        h('div', { class: 'score', 'aria-label': `Score ${c.score} out of 100` }, String(c.score), h('small', {}, '/100')),
+        h('div', { class: 'sum-text' },
+          h('span', { class: 'pill ' + (st.good ? 'pill-good' : 'pill-bad') }, c.status),
+          h('span', { class: 'sum-desc' }, st.text),
+          provider ? h('span', { class: 'sum-meta' }, provider) : null)),
+      h('ul', { class: 'checks' }, rows.map(([state, value], i) => row(i, state, LABELS[i], value))),
+      h('details', { class: 'more' },
+        h('summary', {}, h('i', { class: 'ph ph-caret-right', 'aria-hidden': 'true' }), 'Details and raw JSON'),
+        h('dl', {}, details),
+        h('pre', {}, h('code', {}, JSON.stringify(r, null, 2))))
+    );
+  }
+
+  let seq = 0;
+  input.addEventListener('focus', () => Browser.warm(), { once: true });
+  async function check(raw) {
+    const email = raw.trim();
+    if (!email) { renderError('Enter an email address', 'Or tap one of the examples.'); input.focus(); return; }
+    const id = ++seq;
+    go.disabled = true;
+    renderSkeleton();
+    const ctrl = new AbortController();
+    let timer;
+    const timeout = new Promise((_, rej) => { timer = setTimeout(() => { ctrl.abort(); rej(new Error('timeout')); }, 12000); });
+    try {
+      await engineReady;
+      const r = await Promise.race([engine.validate(email, ctrl.signal), timeout]);
+      if (id !== seq) return;
+      renderResult(r);
+      const url = new URL(location.href);
+      url.searchParams.set('email', email);
+      history.replaceState(null, '', url);
+    } catch (err) {
+      if (id !== seq) return;
+      const msg = err && err.message || String(err);
+      if (msg === 'timeout') renderError('The check timed out', 'DNS took longer than 12 seconds. Try again.');
+      else if (engine === browserEngine) renderError('Could not run the check', `${msg}. A content blocker or offline network can cause this.`);
+      else renderError('Could not reach the validation API', [`${msg}. `, apiParam ? ['Is it running at ', code(apiParam), '?'] : 'Try again in a moment.']);
+    } finally {
+      clearTimeout(timer);
+      if (id === seq) go.disabled = false;
+    }
+  }
+
+  form.addEventListener('submit', e => { e.preventDefault(); check(input.value); });
+  $$('.chip').forEach(ch => ch.addEventListener('click', () => { input.value = ch.dataset.ex; check(ch.dataset.ex); }));
+
+  renderEmpty();
+  const initial = params.get('email');
+  if (initial) { input.value = initial; check(initial); }
+})();
+</script>
+</body>
+</html>
