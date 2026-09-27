@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - name: Checkout repo
@@ -64,7 +65,12 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            npm publish --access public
+          else
+            npm publish --provenance --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           # Note: Bun doesn't have a native publish command yet, so we use npm just for this step
