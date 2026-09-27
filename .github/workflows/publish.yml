@@ -32,8 +32,10 @@ jobs:
       - name: Setup Node.js (for npm publish)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: '22'
+
+      - name: Update npm to latest (required for OIDC Trusted Publishing)
+        run: npm install -g npm@latest
 
       - name: Fetch latest disposable domains list
         run: |
@@ -68,14 +70,11 @@ jobs:
 
       - name: Publish to npm
         run: |
-          if [ -n "$NODE_AUTH_TOKEN" ]; then
-            npm publish --access public
+          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
+            NODE_AUTH_TOKEN="${{ secrets.NPM_TOKEN }}" npm publish --access public
           else
             npm publish --provenance --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # Note: Bun doesn't have a native publish command yet, so we use npm just for this step
 
       - name: Log in to Docker Hub
         if: env.DOCKER_USERNAME != ''
