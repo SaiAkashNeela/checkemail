@@ -32,6 +32,47 @@ npm install checkemail
 
 Requires **Node.js >= 18**.
 
+## Not using Node.js? Use Docker
+
+If your backend is Python, Java, .NET, Go, PHP — or anything other than Node — just run the Docker image. It exposes a simple HTTP API that any language can call.
+
+```bash
+docker run -p 3000:3000 saiakashneela/checkemail
+```
+
+Then call it from any language:
+
+```bash
+curl "http://localhost:3000/validate?email=john+test@gmail.com"
+```
+
+```python
+# Python
+import requests
+r = requests.get('http://localhost:3000/validate', params={'email': 'john@gmail.com'})
+print(r.json())
+```
+
+```java
+// Java (any HTTP client)
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create("http://localhost:3000/validate?email=john@gmail.com"))
+    .build();
+```
+
+```csharp
+// .NET
+var result = await httpClient.GetFromJsonAsync<object>(
+    "http://localhost:3000/validate?email=john@gmail.com");
+```
+
+**Endpoints:**
+
+| Endpoint | Description |
+|---|---|
+| `GET /validate?email=` | Validate an email address |
+| `GET /health` | Health check |
+
 ## Usage
 
 ```ts

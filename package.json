@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "serve": "bun run server.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
