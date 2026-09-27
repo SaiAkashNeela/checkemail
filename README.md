@@ -17,7 +17,7 @@ Fast, zero-dependency email validation for Node.js. No API keys. No rate limits.
 | ✅ Provider fingerprinting | 10 providers + custom domain detection via MX/SPF |
 | ✅ Plus-addressing | `user+tag@gmail.com` → `ALIAS_CONFIRMED` |
 | ✅ Dot-stripping | `j.o.h.n@gmail.com` → canonical `john@gmail.com` |
-| ✅ Role-based detection | 380+ role prefixes (`admin@`, `noreply@`, `support@`, ...) |
+| ✅ Role-based detection | 360+ role prefixes (`admin@`, `noreply@`, `support@`, ...) |
 | ✅ Confidence scoring | 0–100 composite score |
 
 **Zero runtime dependencies** — uses Node's built-in `dns` module. No Redis, no Docker, no API calls.
@@ -196,13 +196,13 @@ This package fetches the latest list and republishes to npm **twice a week** (Mo
 
 ## What is role-based detection?
 
-A role-based address belongs to a team or function, not a real person: `support@`, `admin@`, `noreply@`, `billing@`, etc. The package detects 380+ such prefixes.
+A role-based address belongs to a team or function, not a real person: `support@`, `admin@`, `noreply@`, `billing@`, etc. The package detects 360+ such prefixes.
 
 **Important:** role-based detection is skipped for consumer domains. `admin@gmail.com` is a personal email, not a role address.
 
 ## What are consumer domains?
 
-Consumer domains are personal email providers (Gmail, iCloud, ProtonMail, etc.) as opposed to company/custom domains. The package knows 100+ consumer domains across all major providers and their regional variants.
+Consumer domains are personal email providers (Gmail, iCloud, ProtonMail, etc.) as opposed to company/custom domains. The package knows nearly 100 consumer domains across all major providers and their regional variants.
 
 ## License
 

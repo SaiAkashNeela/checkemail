@@ -141,11 +141,12 @@ export async function domainExists(domain: string): Promise<boolean> {
 export async function checkMx(domain: string): Promise<{ hasMx: boolean; exchanges: string[] }> {
     try {
         const records = await resolveMx(domain);
-        if (records.length === 0) return { hasMx: false, exchanges: [] };
+        // A null MX ("0 .", RFC 7505) comes back as an empty exchange: the domain accepts no mail
         const exchanges = records
             .sort((a, b) => a.priority - b.priority)
-            .map(r => r.exchange.toLowerCase());
-        return { hasMx: true, exchanges };
+            .map(r => r.exchange.toLowerCase().replace(/\.$/, ''))
+            .filter(Boolean);
+        return { hasMx: exchanges.length > 0, exchanges };
     } catch {
         return { hasMx: false, exchanges: [] };
     }
