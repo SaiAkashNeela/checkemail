@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "serve": "bun run server.ts",
+    "serve": "bun run docker/server.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -28,6 +28,14 @@
   ],
   "author": "Sai Akash Neela",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaiAkashNeela/checkemail-dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SaiAkashNeela/checkemail-dev/issues"
+  },
+  "homepage": "https://github.com/SaiAkashNeela/checkemail-dev#readme",
   "dependencies": {},
   "devDependencies": {
     "typescript": "^5.4.2",

@@ -9,6 +9,7 @@ RUN bun install --frozen-lockfile
 COPY tsconfig.json ./
 COPY src/ ./src/
 COPY data/ ./data/
+COPY docker/ ./docker/
 
 # Build TypeScript → dist/
 RUN bun run build
@@ -22,11 +23,11 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/data ./data
+COPY --from=builder /app/docker ./docker
 COPY package.json ./
-COPY server.ts ./
 
 ENV PORT=3000
 EXPOSE 3000
 
 # Run the server directly with Bun (no compile step needed at runtime)
-CMD ["bun", "run", "server.ts"]
+CMD ["bun", "run", "docker/server.ts"]

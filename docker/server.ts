@@ -1,4 +1,4 @@
-import { validateEmail } from './src/index';
+import { validateEmail } from '../dist/index';
 
 const PORT = parseInt(process.env.PORT || '3000');
 
