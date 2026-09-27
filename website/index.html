@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>checkemail: Free, Open-Source Email Validation for Node.js, Docker &amp; Edge</title>
-<meta name="description" content="Validate email syntax, domain, MX records, disposable domains (9,000+), Gmail aliases and mail providers with zero dependencies. MIT licensed. Node.js, Bun, Docker, Cloudflare Workers.">
+<meta name="description" content="Validate email syntax, domain, MX records, disposable domains (9,000+), Gmail aliases and mail providers with zero dependencies. MIT licensed. Node.js, Bun, Docker or right in the browser.">
 <meta name="author" content="Sai Akash Neela">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <link rel="canonical" href="https://checkemail.dev/">
@@ -61,10 +61,10 @@
       "@id": "https://checkemail.dev/#software",
       "name": "checkemail",
       "url": "https://checkemail.dev/",
-      "description": "Open-source email validation engine: RFC 5321/5322 syntax, DNS A/CNAME and MX checks, disposable domain detection against 9,000+ domains, plus-address and dot-alias canonicalization, mail provider fingerprinting and a 0-100 confidence score. Runs in Node.js, Bun, Docker or Cloudflare Workers.",
+      "description": "Open-source email validation engine: RFC 5321/5322 syntax, DNS A/CNAME and MX checks, disposable domain detection against 9,000+ domains, plus-address and dot-alias canonicalization, mail provider fingerprinting and a 0-100 confidence score. Runs in Node.js, Bun, Docker or the browser.",
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "Email validation library",
-      "operatingSystem": "Node.js 18+, Bun, Docker, Cloudflare Workers",
+      "operatingSystem": "Node.js 18+, Bun, Docker, Web browser",
       "softwareRequirements": "Node.js >= 18 or Bun",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
@@ -95,7 +95,7 @@
       "name": "checkemail",
       "codeRepository": "https://github.com/SaiAkashNeela/checkemail-dev",
       "programmingLanguage": "TypeScript",
-      "runtimePlatform": ["Node.js", "Bun", "Docker", "Cloudflare Workers"],
+      "runtimePlatform": ["Node.js", "Bun", "Docker", "Web browser"],
       "license": "https://opensource.org/licenses/MIT",
       "author": { "@id": "https://checkemail.dev/#author" },
       "targetProduct": { "@id": "https://checkemail.dev/#software" }
@@ -109,7 +109,7 @@
         { "@type": "Question", "name": "How does checkemail handle Gmail aliases like john.doe+test@gmail.com?", "acceptedAnswer": { "@type": "Answer", "text": "It strips the +tag, removes dots from the local part and folds googlemail.com into gmail.com. john.doe+test@gmail.com returns alias_status ALIAS_CONFIRMED and canonical_email johndoe@gmail.com, so you can detect repeat signups." } },
         { "@type": "Question", "name": "Which email providers can checkemail identify?", "acceptedAnswer": { "@type": "Answer", "text": "Gmail, Microsoft consumer (Outlook, Hotmail, Live, MSN), iCloud, Proton Mail, Yahoo, Fastmail, Zoho Mail, Yandex Mail and Google Groups from the domain. Custom domains hosted on Google Workspace or Microsoft 365 are detected from their MX and SPF records." } },
         { "@type": "Question", "name": "Can I use checkemail from Python, Go, Java, .NET or PHP?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Run the Docker image (docker run -p 3000:3000 saiakashneela/checkemail) and call GET /validate?email= from any HTTP client. The response is the same JSON the Node.js package returns." } },
-        { "@type": "Question", "name": "Does checkemail run on Cloudflare Workers or in the browser?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The repository includes an edge build that resolves DNS over HTTPS through Cloudflare's 1.1.1.1 and deploys with npx wrangler deploy. The demo on checkemail.dev runs the same logic directly in the browser." } },
+        { "@type": "Question", "name": "Can checkemail run in the browser without a server?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The demo on checkemail.dev runs the same checks directly in the browser and resolves DNS over HTTPS through Cloudflare's 1.1.1.1. The whole site is one static HTML file you can host for free on Cloudflare Pages or GitHub Pages." } },
         { "@type": "Question", "name": "What does the checkemail confidence score mean?", "acceptedAnswer": { "@type": "Answer", "text": "Any status other than LIKELY scores 0. Otherwise points are summed: +20 domain resolves, +20 MX records, +20 not disposable, +20 no alias signals (+10 alias possible, -5 alias confirmed), +10 not a role inbox. A clean personal address scores 90." } },
         { "@type": "Question", "name": "Is checkemail free for commercial use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. checkemail is MIT licensed, has no API keys, no per-check pricing and no usage tiers." } }
       ]
@@ -482,12 +482,12 @@ footer { border-top: 1px solid var(--rule); padding: 64px 0 32px; }
     <span class="anchor" id="docker"></span><span class="anchor" id="edge"></span>
     <div class="wrap">
       <h2 data-reveal>Use it anywhere</h2>
-      <p class="sub" data-reveal>Import it in JavaScript, deploy it to the edge, or call it over HTTP from any language.</p>
+      <p class="sub" data-reveal>Import it in JavaScript, call it over HTTP from any language, or host this page for free.</p>
       <div class="stack" data-reveal>
         <div class="tabs" role="tablist" aria-label="Integration">
           <button role="tab" id="t-node" aria-selected="true" aria-controls="p-node"><span class="brand-mark bm-node" aria-hidden="true"></span>Node.js / Bun</button>
           <button role="tab" id="t-http" aria-selected="false" aria-controls="p-http" tabindex="-1"><span class="brand-mark bm-docker" aria-hidden="true"></span>Docker API</button>
-          <button role="tab" id="t-worker" aria-selected="false" aria-controls="p-worker" tabindex="-1"><span class="brand-mark bm-cloudflare" aria-hidden="true"></span>Cloudflare Workers</button>
+          <button role="tab" id="t-pages" aria-selected="false" aria-controls="p-pages" tabindex="-1"><span class="brand-mark bm-cloudflare" aria-hidden="true"></span>Cloudflare Pages</button>
         </div>
 
         <div role="tabpanel" id="p-node" aria-labelledby="t-node">
@@ -543,21 +543,12 @@ System.out.println(response.body());</code></pre>
           <p class="note">Endpoints: <code>GET /validate?email=</code> and <code>GET /health</code>. Port set by <code>PORT</code> (default 3000), CORS open for GET. Try it with this page: <a href="?api=http://localhost:3000#demo">?api=http://localhost:3000</a></p>
         </div>
 
-        <div role="tabpanel" id="p-worker" aria-labelledby="t-worker" hidden>
+        <div role="tabpanel" id="p-pages" aria-labelledby="t-pages" hidden>
           <div class="panel-bar"><span>terminal</span><button class="copy" type="button" data-copy-from="c-deploy" aria-label="Copy commands"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
 <pre class="code"><code id="c-deploy" data-lang="sh">git clone https://github.com/SaiAkashNeela/checkemail-dev
-cd checkemail-dev/website
-npx wrangler deploy</code></pre>
-          <div class="panel-bar"><span>website/functions/index.ts</span><button class="copy" type="button" data-copy-from="c-worker" aria-label="Copy code"><i class="ph ph-copy" aria-hidden="true"></i></button></div>
-<pre class="code"><code id="c-worker" data-lang="ts">import { validateEmail } from './edge';
-
-export default {
-  async fetch(req: Request) {
-    const email = new URL(req.url).searchParams.get('email') ?? '';
-    return Response.json(await validateEmail(email));
-  },
-};</code></pre>
-          <p class="note">Deploys this site plus <code>GET /api/validate?email=</code> on the Workers free plan. DNS goes over HTTPS to 1.1.1.1; the domain lists are bundled into the Worker.</p>
+cd checkemail-dev
+npx wrangler pages deploy website --project-name checkemail</code></pre>
+          <p class="note">The site is plain static files, so it runs free on Cloudflare Pages or any static host. The demo runs checkemail's checks in the visitor's browser and resolves DNS over HTTPS through 1.1.1.1. There is no server to run.</p>
         </div>
       </div>
     </div>
@@ -573,7 +564,7 @@ export default {
         <details><summary>How does checkemail handle Gmail aliases like john.doe+test@gmail.com?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>It strips the <code>+tag</code>, removes dots from the local part and folds <code>googlemail.com</code> into <code>gmail.com</code>. <code>john.doe+test@gmail.com</code> returns <code>alias_status: ALIAS_CONFIRMED</code> and <code>canonical_email: johndoe@gmail.com</code>, so you can detect repeat signups.</p></details>
         <details><summary>Which email providers can checkemail identify?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Gmail, Microsoft consumer (Outlook, Hotmail, Live, MSN), iCloud, Proton Mail, Yahoo, Fastmail, Zoho Mail, Yandex Mail and Google Groups from the domain. Custom domains hosted on Google Workspace or Microsoft 365 are detected from their MX and SPF records.</p></details>
         <details><summary>Can I use checkemail from Python, Go, Java, .NET or PHP?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. Run the Docker image (<code>docker run -p 3000:3000 saiakashneela/checkemail</code>) and call <code>GET /validate?email=</code> from any HTTP client. The response is the same JSON the Node.js package returns.</p></details>
-        <details><summary>Does checkemail run on Cloudflare Workers or in the browser?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. The repository includes an edge build that resolves DNS over HTTPS through Cloudflare's 1.1.1.1 and deploys with <code>npx wrangler deploy</code>. The demo on checkemail.dev runs the same logic directly in the browser.</p></details>
+        <details><summary>Can checkemail run in the browser without a server?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. The demo on checkemail.dev runs the same checks directly in the browser and resolves DNS over HTTPS through Cloudflare's 1.1.1.1. The whole site is one static HTML file you can host for free on Cloudflare Pages or GitHub Pages.</p></details>
         <details><summary>What does the checkemail confidence score mean?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Any status other than <code>LIKELY</code> scores 0. Otherwise points are summed: +20 domain resolves, +20 MX records, +20 not disposable, +20 no alias signals (+10 alias possible, -5 alias confirmed), +10 not a role inbox. A clean personal address scores 90.</p></details>
         <details><summary>Is checkemail free for commercial use?<i class="ph ph-plus" aria-hidden="true"></i></summary><p>Yes. checkemail is MIT licensed, has no API keys, no per-check pricing and no usage tiers.</p></details>
       </div>
@@ -609,7 +600,7 @@ export default {
   </div>
 </footer>
 
-<!-- Generated from data/*.txt by website/scripts/sync-lists.mjs -->
+<!-- Copied from data/role_based.txt and data/consumer_domains.txt. Update together. -->
 <script type="application/json" id="lists">{"role":["support","help","service","info","contact","hello","admin","administrator","manager","office","sales","business","deals","marketing","press","media","hr","jobs","careers","abuse","security","compliance","privacy","legal","dmca","fraud","trust","billing","accounts","accounting","finance","payments","invoices","monitoring","uptime","status","health","heartbeat","cron","scheduler","workers","ux","ui","design","designers","research","usability","productops","roadmap","discovery","relations","stakeholders","investors","ir","shareholders","pr","publicaffairs","government","policy","seo","content","copy","brand","branding","social","socialmedia","influencers","affiliates","campaigns","promotions","internal","intranet","backoffice","operations","enablement","facilities","workplace","customersuccess","cs","cx","onboarding","implementations","adoption","feedback","reviews","voice","experience","revenue","growth","monetization","subscriptions","pricing","plans","upsell","renewals","retention","churn","contracts","licensing","copyright","ip","intellectualproperty","governance","ethics","whistleblower","ombudsman","data","datascience","ml","ai","analytics","insights","bi","lab","labs","experiments","platform","backend","frontend","mobile","ios","android","qa","quality","testing","release","build","ci","cd","devops","sre","reliability","cloud","kubernetes","k8s","containers","soc","cert","incident","vuln","vulnerabilities","bugbounty","bugs","risk","assurance","forensics","payroll","tax","it","tech","engineering","dev","developer","developers","ops","sysadmin","adminteam","infrastructure","orders","order","shipping","returns","logistics","warehouse","fulfillment","product","products","newsletter","news","announcements","updates","alerts","notifications","broadcast","community","events","ceo","cto","cfo","coo","founder","founders","leadership","management","board","directors","training","learning","education","academy","students","admissions","courses","noreply","no-reply","do-not-reply","donotreply","automated","system","systems","mailer","mail","robot","bot","partners","partnerships","alliances","vendors","suppliers","procurement","sourcing","team","staff","everyone","all","group","hq","global","postmaster","hostmaster","webmaster","root","tickets","chief","executive","exec","lead","head","chairman","chair","president","vp","svp","evp","ar","ap","receivables","collections","treasury","controller","bookkeeping","bookkeeper","legalteam","lawyer","counsel","dataprotection","dpo","gdpr","riskteam","regulatory","compliance-team","eng","engineers","devteam","backend-team","frontend-team","mobile-team","platform-team","infra","infra-team","qatest","qa-team","testers","release-team","staging","preprod","sandbox","data-team","analytics-team","ml-team","ai-team","research-team","science","experimentation","salesops","revops","commerce","ecommerce","store","shop","purchases","purchase","users","user","members","membership","accounts-team","support-team","helpdesk","servicedesk","demand","demandgen","performance","paid","ads","advertising","growth-team","marketingops","product-team","pm","pms","productmanager","product-owner","ux-team","ui-team","design-team","people","peopleops","culture","talent","talentops","hr-team","workforce","auto","autobot","notifications-team","events-team","dispatch","queue","pipeline","dns","abuse-team","noc","network","netops","beta","earlyaccess","preview","labs-team","innovation","future","api","webhook","webhooks","receipt","receipts","invoice","confirmation","confirmations","subscribe","unsubscribe","verify","verification","activate","activation","bounce","bounces","mailer-daemon","maildaemon","daemon","ping","replies","reply","hi","hey","general","enquiries","enquiry","queries","query","request","requests"],"consumer":["gmail.com","googlemail.com","outlook.com","outlook.co.uk","outlook.fr","outlook.de","outlook.com.au","live.com","live.co.uk","live.fr","live.com.au","hotmail.com","hotmail.co.uk","hotmail.fr","hotmail.de","msn.com","icloud.com","me.com","mac.com","yahoo.com","yahoo.co.uk","yahoo.co.in","yahoo.fr","yahoo.de","yahoo.com.au","yahoo.com.ar","yahoo.com.br","yahoo.com.mx","yahoo.es","yahoo.it","yahoo.ca","ymail.com","rocketmail.com","proton.me","protonmail.com","pm.me","protonmail.ch","tuta.com","tuta.io","tutanota.com","tutanota.de","tutamail.com","keemail.me","fastmail.com","fastmail.fm","fastmail.to","fastmail.net","fastmail.org","fastmail.in","fastmail.us","fastmail.cn","fastmail.es","fastmail.de","fastmail.jp","zoho.com","zohomail.com","yandex.com","yandex.ru","yandex.ua","yandex.by","yandex.kz","ya.ru","gmx.com","gmx.de","gmx.net","gmx.at","gmx.ch","gmx.fr","gmx.us","gmx.co.uk","mail.com","inbox.com","email.com","usa.com","myself.com","consultant.com","post.com","techie.com","writeme.com","aol.com","aim.com","verizon.net","att.net","sbcglobal.net","bellsouth.net","cox.net","charter.net","comcast.net","optonline.net","earthlink.net","mailbox.org","posteo.de","disroot.org","riseup.net","startmail.com","mailfence.com","hey.com","ik.me","privaterelay.appleid.com"]}</script>
 <script>
 (() => {
@@ -660,7 +651,7 @@ export default {
     });
   });
   // #docker and #edge land on the matching integration tab
-  const TAB_FOR_HASH = { '#docker': 't-http', '#edge': 't-worker' };
+  const TAB_FOR_HASH = { '#docker': 't-http', '#edge': 't-pages' };
   const syncTab = () => { const id = TAB_FOR_HASH[location.hash]; if (id) document.getElementById(id).click(); };
   window.addEventListener('hashchange', syncTab);
   syncTab();
@@ -727,7 +718,7 @@ export default {
     })
     .catch(() => {});
 
-  /* Browser engine: a port of src/ (same as website/functions/edge.ts). DNS goes over
+  /* Browser engine: a port of src/. DNS goes over
      HTTPS to Cloudflare (Google as fallback); only the domain ever leaves the page. */
   const Browser = (() => {
     const LOCAL_RE = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/;
@@ -920,8 +911,7 @@ export default {
   })();
 
   /* Engine selection:
-       ?api=http://localhost:3000  -> that HTTP API (Docker or any deployed Worker)
-       served by the Worker        -> same-origin /api (detected via /api/health)
+       ?api=http://localhost:3000  -> that HTTP API (the Docker image)
        anywhere else               -> the browser engine above */
   const params = new URLSearchParams(location.search);
   const apiParam = params.get('api');
@@ -944,18 +934,6 @@ export default {
       help.textContent = `Checked by the API at ${engine.label}. Nothing is stored.`;
       return;
     }
-    if (!location.protocol.startsWith('http')) return;
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 1500);
-      const res = await fetch('/api/health', { signal: ctrl.signal });
-      clearTimeout(t);
-      const body = res.ok ? await res.json() : null;
-      if (body && body.status === 'ok') {
-        engine = httpEngine('/api', 'Cloudflare edge');
-        help.textContent = 'Checked by this site\u2019s Cloudflare Worker at /api/validate. Nothing is stored.';
-      }
-    } catch {}
   })();
 
 

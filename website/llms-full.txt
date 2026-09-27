@@ -156,22 +156,15 @@ r = requests.get('http://localhost:3000/validate', params={'email': 'john@gmail.
 print(r.json()['confidence']['status'])
 ```
 
-## Cloudflare Workers
+## In the browser (no server)
 
-The repository's `website/` folder is a Worker that serves checkemail.dev and an API:
+checkemail.dev is a single static HTML file. Its live demo runs the same checks in the visitor's browser and resolves DNS over HTTPS through Cloudflare's 1.1.1.1 (Google DNS as fallback). Only the domain is queried; nothing is stored. Host it free on Cloudflare Pages or any static host:
 
 ```bash
 git clone https://github.com/SaiAkashNeela/checkemail-dev
-cd checkemail-dev/website
-npx wrangler deploy
+cd checkemail-dev
+npx wrangler pages deploy website --project-name checkemail
 ```
-
-| Endpoint | Description |
-|---|---|
-| GET /api/validate?email= | Same response as the Docker API, plus `records` (raw A, CNAME and MX answers) |
-| GET /api/health | Health check and dataset sizes |
-
-The edge build bundles the domain lists (the npm build reads them from disk, which Workers can't), reuses checkemail's syntax and scoring modules, and resolves DNS over HTTPS through Cloudflare's 1.1.1.1. Each check makes at most three DNS subrequests.
 
 ## Disposable list updates
 

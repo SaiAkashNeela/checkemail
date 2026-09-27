@@ -1,9 +1,8 @@
 # checkemail.dev
-# Everything is public. /api/ is the live validation endpoint, not content.
+# Everything is public.
 
 User-agent: *
 Allow: /
-Disallow: /api/
 
 # Search and AI crawlers are welcome. Named so it's explicit, not an oversight.
 User-agent: Googlebot
@@ -24,6 +23,5 @@ User-agent: CCBot
 User-agent: Amazonbot
 User-agent: meta-externalagent
 Allow: /
-Disallow: /api/
 
 Sitemap: https://checkemail.dev/sitemap.xml
