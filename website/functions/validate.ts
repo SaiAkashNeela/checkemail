@@ -1,11 +1,11 @@
 // Free public endpoint: GET https://checkemail.dev/validate?email=...
-// Cloudflare Pages Function. Same JSON as the Docker API (docker/server.ts).
+// Cloudflare Pages Function. Same JSON as the Docker API (../../docker/server.ts).
 // Nothing is stored or logged; the DNS cache below holds domains only.
-import { createValidator, dohResolver, withCache, parseList } from '../src/edge';
+import { createValidator, dohResolver, withCache, parseList } from '../../src/edge';
 // Bundled as text at deploy time, so each deploy ships the list CI last committed
-import disposableTxt from '../data/disposable.txt';
-import roleTxt from '../data/role_based.txt';
-import consumerTxt from '../data/consumer_domains.txt';
+import disposableTxt from '../../data/disposable.txt';
+import roleTxt from '../../data/role_based.txt';
+import consumerTxt from '../../data/consumer_domains.txt';
 
 // Module scope: parsed once per isolate, DNS cache shared across requests in that isolate
 const validateEmail = createValidator({
