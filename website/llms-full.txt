@@ -134,6 +134,14 @@ The maximum is 90 (clean personal address). A confirmed alias on a personal addr
 
 `provider` is null when the provider is not recognized.
 
+## Free hosted API
+
+```bash
+curl "https://checkemail.dev/validate?email=john.doe%2Btest@gmail.com"
+```
+
+Same endpoint and JSON as the Docker API, running as a Cloudflare Pages Function. No API key. CORS allows GET from any origin. Missing `email` returns HTTP 400. Addresses are not stored or logged. For bulk or high-volume checks, run the Docker image or the npm package yourself.
+
 ## Docker HTTP API (any language)
 
 ```bash
@@ -179,10 +187,10 @@ Q: Is it free for commercial use?
 A: Yes. MIT licensed, no API keys, no per-check pricing, no usage tiers.
 
 Q: Where does my data go?
-A: Validation runs in your own process. Only the domain is sent over the network, as DNS queries to your resolver.
+A: With the npm package or Docker image, validation runs in your own process. Only the domain is sent over the network, as DNS queries to your resolver. The hosted endpoint at checkemail.dev does not store or log addresses.
 
 Q: Can I use it from Python, Go, Java, .NET or PHP?
-A: Yes, through the Docker HTTP API.
+A: Yes, through the free hosted endpoint (https://checkemail.dev/validate?email=) or the Docker HTTP API.
 
 ## Author
 

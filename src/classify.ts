@@ -1,9 +1,9 @@
 import {
-    ROLE_SET, CONSUMER_DOMAINS,
+    Lists,
     GMAIL_DOMAINS, PROTON_DOMAINS, MICROSOFT_CONSUMER_DOMAINS,
     APPLE_DOMAINS, YAHOO_DOMAINS, FASTMAIL_DOMAINS, ZOHO_DOMAINS, YANDEX_DOMAINS
-} from './data';
-import { detectProviderFromDns } from './dns';
+} from './lists';
+import { Resolver, detectProviderFromDns } from './resolver';
 
 export type AliasStatus = 'MAYBE_NOT_ALIAS' | 'ALIAS_CONFIRMED' | 'ALIAS_POSSIBLE' | 'ALIAS_UNKNOWN';
 export type Provider =
@@ -21,7 +21,7 @@ export interface ClassificationResult {
     equivalent_domains?: string[];
 }
 
-export async function classify(email: string): Promise<ClassificationResult> {
+export async function classify(email: string, resolver: Resolver, lists: Lists): Promise<ClassificationResult> {
     const atIdx = email.lastIndexOf('@');
     const local = email.slice(0, atIdx).toLowerCase().trim();
     const domain = email.slice(atIdx + 1).toLowerCase().trim();
@@ -32,8 +32,8 @@ export async function classify(email: string): Promise<ClassificationResult> {
     }
 
     // Role-based: only flag for non-consumer domains (consumer emails like admin@gmail.com are personal)
-    const isConsumer = CONSUMER_DOMAINS.has(domain);
-    const is_role_based = !isConsumer && ROLE_SET.has(local);
+    const isConsumer = lists.consumer.has(domain);
+    const is_role_based = !isConsumer && lists.role.has(local);
 
     // Identify provider — known domains first (no DNS needed), then DNS fallback
     let provider: Provider = 'UNKNOWN';
@@ -49,7 +49,7 @@ export async function classify(email: string): Promise<ClassificationResult> {
     else if (YANDEX_DOMAINS.has(domain))            { provider = 'YANDEX';              provider_name = 'Yandex Mail'; }
     else {
         // Custom domain — check MX/SPF to identify Google Workspace or Microsoft 365
-        const detected = await detectProviderFromDns(domain);
+        const detected = await detectProviderFromDns(resolver, domain);
         if (detected === 'GOOGLE_WORKSPACE')  { provider = 'GOOGLE_WORKSPACE'; provider_name = 'Google Workspace'; }
         else if (detected === 'MICROSOFT_365'){ provider = 'MICROSOFT_365';    provider_name = 'Microsoft 365'; }
     }

@@ -22,6 +22,8 @@ Fast, zero-dependency email validation for Node.js. No API keys. No rate limits.
 
 **Zero runtime dependencies** — uses Node's built-in `dns` module with Cloudflare/Google DoH fallback. No Redis, no Docker, no API calls.
 
+Running on Cloudflare Workers, Deno or another runtime without Node built-ins? Import from `@isan3/checkemail/dist/edge` and build a validator with `createValidator({ resolver: withCache(dohResolver), lists })`. See [`functions/validate.ts`](functions/validate.ts) for a working example.
+
 ## Install
 
 ```bash
@@ -31,6 +33,21 @@ npm install @isan3/checkemail
 ```
 
 Requires **Node.js >= 18**.
+
+## Free hosted API
+
+Don't want to install or host anything? Call the public endpoint:
+
+```bash
+curl "https://checkemail.dev/validate?email=john%2Btest@gmail.com"
+```
+
+- Same JSON as the npm package and the Docker image
+- No API key, CORS open for `GET`
+- Addresses are not stored or logged
+- Runs as a Cloudflare Pages Function ([`functions/validate.ts`](functions/validate.ts))
+
+For bulk list cleaning or high volume, please run your own copy (npm or Docker below).
 
 ## Not using Node.js? Use Docker
 
