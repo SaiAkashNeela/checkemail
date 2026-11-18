@@ -26,11 +26,18 @@ export const nodeResolver: Resolver = {
         }
     },
     async domainExists(domain) {
+        // ENODATA = the name exists but has no record of that type: try AAAA (IPv6-only hosts).
+        // Any other error (timeout, refused, NXDOMAIN) falls back to DoH as before.
+        const noData = (err: unknown) => (err as NodeJS.ErrnoException)?.code === 'ENODATA';
         try {
-            await dnsPromises.resolve(domain);
-            return true;
-        } catch {
-            return dohResolver.domainExists(domain);
+            if ((await dnsPromises.resolve4(domain)).length > 0) return true;
+        } catch (err) {
+            if (!noData(err)) return dohResolver.domainExists(domain);
+        }
+        try {
+            return (await dnsPromises.resolve6(domain)).length > 0;
+        } catch (err) {
+            return noData(err) ? false : dohResolver.domainExists(domain);
         }
     },
 };

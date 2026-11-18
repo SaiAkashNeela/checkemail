@@ -4,7 +4,7 @@ import type { MxRecord, Resolver } from './resolver';
 // Cloudflare Workers/Pages and browsers. Cloudflare 1.1.1.1 first, Google 8.8.8.8 as fallback.
 interface DohResponse { Status: number; Answer?: Array<{ type: number; data: string }>; }
 
-const TYPES = { A: 1, MX: 15, TXT: 16 } as const;
+const TYPES = { A: 1, MX: 15, TXT: 16, AAAA: 28 } as const;
 
 async function query(name: string, type: keyof typeof TYPES): Promise<DohResponse> {
     const q = `name=${encodeURIComponent(name)}&type=${type}`;
@@ -51,9 +51,12 @@ export const dohResolver: Resolver = {
     },
     async domainExists(domain) {
         try {
-            const res = await query(domain, 'A');
             // Any answer counts, including a CNAME chain
-            return res.Status === 0 && (res.Answer?.length ?? 0) > 0;
+            const a = await query(domain, 'A');
+            if (a.Status === 0 && (a.Answer?.length ?? 0) > 0) return true;
+            if (a.Status !== 0) return false; // NXDOMAIN or SERVFAIL: no point asking for AAAA
+            const aaaa = await query(domain, 'AAAA'); // IPv6-only host
+            return aaaa.Status === 0 && (aaaa.Answer?.length ?? 0) > 0;
         } catch {
             return false;
         }

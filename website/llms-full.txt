@@ -13,7 +13,7 @@ License: MIT
 | Check | How |
 |---|---|
 | Syntax | RFC 5321/5322 local part and domain rules; 254 characters total, 64 for the local part |
-| Domain existence | DNS A lookup (CNAMEs followed) |
+| Domain existence | DNS A or AAAA record (CNAMEs followed), or any MX record: mail-only domains with no website are valid |
 | Mail server | DNS MX lookup |
 | Disposable domain | Exact match against 9,000+ domains from the disposable-email-domains project |
 | Role inbox | 370+ prefixes such as support, admin, billing, noreply; skipped on consumer domains (admin@gmail.com is a person) |
@@ -85,7 +85,7 @@ More examples (actual outputs):
 |---|---|
 | LIKELY | Valid syntax, domain resolves, MX records present |
 | INVALID_FORMAT | Syntax is wrong |
-| INVALID_DOMAIN | Domain does not resolve in DNS |
+| INVALID_DOMAIN | Domain has no A, AAAA or MX record |
 | NO_MX_RECORDS | Domain exists but publishes no mail server |
 | DISPOSABLE | Throwaway address from a disposable provider |
 

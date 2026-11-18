@@ -68,7 +68,7 @@
       "@id": "https://checkemail.dev/#software",
       "name": "checkemail",
       "url": "https://checkemail.dev/",
-      "description": "Open-source email validation engine: RFC 5321/5322 syntax, DNS A/CNAME and MX checks, disposable domain detection against 9,000+ domains, plus-address and dot-alias canonicalization, mail provider fingerprinting and a 0-100 confidence score. Runs in Node.js, Bun, Docker or the browser.",
+      "description": "Open-source email validation engine: RFC 5321/5322 syntax, DNS A/AAAA and MX checks, disposable domain detection against 9,000+ domains, plus-address and dot-alias canonicalization, mail provider fingerprinting and a 0-100 confidence score. Runs in Node.js, Bun, Docker or the browser.",
       "applicationCategory": "DeveloperApplication",
       "applicationSubCategory": "Email validation library",
       "operatingSystem": "Node.js 18+, Bun, Docker, Web browser",
@@ -86,7 +86,7 @@
       ],
       "featureList": [
         "RFC 5321/5322 syntax validation",
-        "DNS A/CNAME domain existence check",
+        "DNS A/AAAA/MX domain existence check",
         "MX record check",
         "Disposable email detection (9,000+ domains, refreshed twice a week)",
         "Role-based address detection (370+ prefixes)",
@@ -815,14 +815,17 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
     const lookupA = async d => {
       const ans = await query(d, 'A');
       const a = ans.filter(r => r.type === 1).map(r => r.data);
-      return { exists: a.length > 0, a, cname: ans.filter(r => r.type === 5).map(r => stripDot(r.data)) };
+      let exists = a.length > 0;
+      if (!exists) { try { exists = (await query(d, 'AAAA')).some(r => r.type === 28); } catch {} } // IPv6-only host
+      return { exists, a, cname: ans.filter(r => r.type === 5).map(r => stripDot(r.data)) };
     };
     const lookupMx = async d => {
-      const mx = (await query(d, 'MX')).filter(r => r.type === 15).map(r => {
+      const records = (await query(d, 'MX')).filter(r => r.type === 15);
+      const mx = records.map(r => {
         const [p, ex] = r.data.split(/\s+/);
         return { priority: Number(p), exchange: stripDot(ex || '') };
       }).filter(r => r.exchange).sort((x, y) => x.priority - y.priority); // drop null MX ("0 .")
-      return { hasMx: mx.length > 0, mx };
+      return { hasMx: mx.length > 0, hasRecords: records.length > 0, mx };
     };
     const lookupSpf = async d => {
       try {
@@ -919,18 +922,20 @@ npx wrangler pages deploy website --project-name checkemail</code></pre>
 
       const aP = lookupA(domain), mxP = lookupMx(domain);
       const [a, mx, cls] = await Promise.all([aP, mxP, classify(email, mxP.then(m => m.mx.map(r => r.exchange)))]);
+      // Exists = A/AAAA or any MX record: mail-only domains (no website) are real (mirrors src/core.ts)
+      const domain_exists = a.exists || mx.hasRecords;
       let status = 'LIKELY';
-      if (!a.exists) status = 'INVALID_DOMAIN';
+      if (!domain_exists) status = 'INVALID_DOMAIN';
       else if (!mx.hasMx) status = 'NO_MX_RECORDS';
       if (status !== 'LIKELY') { cls.is_role_based = false; cls.alias_status = 'MAYBE_NOT_ALIAS'; cls.canonical_email = null; }
       const confidence = {
-        score: score({ domain_exists: a.exists, mx_records: mx.hasMx, is_disposable: false, is_role_based: cls.is_role_based, alias_status: cls.alias_status, status }),
+        score: score({ domain_exists, mx_records: mx.hasMx, is_disposable: false, is_role_based: cls.is_role_based, alias_status: cls.alias_status, status }),
         status, is_role_based: cls.is_role_based, alias_status: cls.alias_status, canonical_email: cls.canonical_email,
       };
       if (cls.equivalent_domains) confidence.equivalent_domains = cls.equivalent_domains;
       return {
         email,
-        validations: { syntax: true, domain_exists: a.exists, mx_records: mx.hasMx, is_disposable: false },
+        validations: { syntax: true, domain_exists, mx_records: mx.hasMx, is_disposable: false },
         confidence,
         provider: cls.provider !== 'UNKNOWN' ? { id: cls.provider, name: cls.provider_name } : null,
         meta: { latency_ms: Math.round(performance.now() - t0) },

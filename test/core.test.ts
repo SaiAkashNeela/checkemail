@@ -25,6 +25,8 @@ const validate = createValidator({
         'gmail.com': { a: true, mx: ['gmail-smtp-in.l.google.com'] },
         'acme.test': { a: true, mx: ['aspmx.l.google.com'] },
         'nomail.test': { a: true },
+        'mailonly.test': { mx: ['mx.mailonly.test'] }, // mail server, no A/AAAA (e.g. post.harvard.edu)
+        'nullmx.test': { mx: ['.'] },                   // RFC 7505 null MX only: exists, accepts no mail
     }),
 });
 
@@ -69,6 +71,18 @@ describe('createValidator', () => {
         expect((await validate('x@mailinator.com')).confidence.status).toBe('DISPOSABLE');
         expect((await validate('x@missing.test')).confidence.status).toBe('INVALID_DOMAIN');
         expect((await validate('x@nomail.test')).confidence).toMatchObject({ status: 'NO_MX_RECORDS', score: 0 });
+    });
+
+    test('a domain with MX records but no A record is valid (RFC 5321 delivers via MX)', async () => {
+        const r = await validate('jane@mailonly.test');
+        expect(r.validations).toEqual({ syntax: true, domain_exists: true, mx_records: true, is_disposable: false });
+        expect(r.confidence).toMatchObject({ status: 'LIKELY', score: 90 });
+    });
+
+    test('a domain whose only record is a null MX exists but accepts no mail', async () => {
+        const r = await validate('jane@nullmx.test');
+        expect(r.validations).toMatchObject({ domain_exists: true, mx_records: false });
+        expect(r.confidence).toMatchObject({ status: 'NO_MX_RECORDS', score: 0 });
     });
 });
 

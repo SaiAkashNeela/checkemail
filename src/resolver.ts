@@ -6,7 +6,7 @@ export interface Resolver {
     resolveMx(domain: string): Promise<MxRecord[]>;
     /** TXT records, each record split into its character strings. Throws if the lookup fails. */
     resolveTxt(domain: string): Promise<string[][]>;
-    /** True when the domain has an A record (directly or via CNAME). Never throws. */
+    /** True when the domain has an A or AAAA record (directly or via CNAME). Never throws. */
     domainExists(domain: string): Promise<boolean>;
 }
 
@@ -61,8 +61,12 @@ export function withCache(resolver: Resolver, ttlMs = TTL, negativeTtlMs = Math.
     };
 }
 
-/** MX records sorted by priority. Also handles null MX ("0 .", RFC 7505). */
-export async function checkMx(resolver: Resolver, domain: string): Promise<{ hasMx: boolean; exchanges: string[] }> {
+/**
+ * MX records sorted by priority. Also handles null MX ("0 .", RFC 7505).
+ * `hasMx`: at least one usable mail server. `hasRecords`: any MX record at all, including a
+ * null MX, which still proves the domain exists in DNS.
+ */
+export async function checkMx(resolver: Resolver, domain: string): Promise<{ hasMx: boolean; hasRecords: boolean; exchanges: string[] }> {
     try {
         const records = await resolver.resolveMx(domain);
         // A null MX ("0 .", RFC 7505) comes back as an empty exchange: the domain accepts no mail
@@ -70,9 +74,9 @@ export async function checkMx(resolver: Resolver, domain: string): Promise<{ has
             .sort((a, b) => a.priority - b.priority)
             .map(r => r.exchange.toLowerCase().replace(/\.$/, ''))
             .filter(Boolean);
-        return { hasMx: exchanges.length > 0, exchanges };
+        return { hasMx: exchanges.length > 0, hasRecords: records.length > 0, exchanges };
     } catch {
-        return { hasMx: false, exchanges: [] };
+        return { hasMx: false, hasRecords: false, exchanges: [] };
     }
 }
 
