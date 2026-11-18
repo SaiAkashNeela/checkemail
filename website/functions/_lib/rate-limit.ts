@@ -79,6 +79,9 @@ export function clientKey(request: Request): string {
     const ip = request.headers.get('CF-Connecting-IP')?.trim();
     if (!ip) return 'unknown';
     if (!ip.includes(':')) return ip;
+    // IPv4-mapped IPv6 (::ffff:203.0.113.7): key by the IPv4 address, not a shared /64
+    const mapped = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i.exec(ip);
+    if (mapped) return mapped[1];
     const hextets = ipv6Hextets(ip);
     if (!hextets) return ip;
     return hextets.slice(0, 4).map(h => h.replace(/^0+(?=.)/, '')).join(':') + '::/64';

@@ -112,6 +112,17 @@ describe('withCache', () => {
         expect(calls.mx).toBe(2);
     });
 
+    test('a resolver that throws synchronously still rejects', async () => {
+        const cached = withCache({
+            resolveMx: () => { throw new Error('sync boom'); },
+            resolveTxt: async () => [],
+            domainExists: async () => true,
+        });
+        const p = cached.resolveMx('a.test');
+        expect(p).toBeInstanceOf(Promise);
+        await expect(p).rejects.toThrow('sync boom');
+    });
+
     test('negative answers expire sooner than positive ones', async () => {
         let exists = false;
         const { resolver, calls } = counting({ domainExists: async () => exists });

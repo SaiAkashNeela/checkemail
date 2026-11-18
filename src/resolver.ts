@@ -46,7 +46,8 @@ export function withCache(resolver: Resolver, ttlMs = TTL, negativeTtlMs = Math.
         if (hit !== undefined) return Promise.resolve(hit);
         const pending = inflight.get(key) as Promise<T> | undefined;
         if (pending) return pending;
-        const p = lookup()
+        // Promise.resolve().then: a resolver that throws synchronously still yields a rejection
+        const p = Promise.resolve().then(lookup)
             .then(val => { set(key, val); return val; })
             .finally(() => inflight.delete(key));
         inflight.set(key, p);

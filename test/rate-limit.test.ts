@@ -84,6 +84,11 @@ describe('clientKey', () => {
         expect(clientKey(req('::1'))).toBe('0:0:0:0::/64');
     });
 
+    test('IPv4-mapped IPv6 is keyed by the IPv4 address', () => {
+        expect(clientKey(req('::ffff:203.0.113.7'))).toBe('203.0.113.7');
+        expect(clientKey(req('::FFFF:198.51.100.1'))).toBe('198.51.100.1');
+    });
+
     test('falls back safely', () => {
         expect(clientKey(req())).toBe('unknown');
         expect(clientKey(req('not:an::ip::addr'))).toBe('not:an::ip::addr');
