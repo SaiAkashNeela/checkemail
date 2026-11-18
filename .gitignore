@@ -4,3 +4,5 @@ dist/
 .DS_Store
 .wrangler/
 .playwright-mcp/
+.security-audit/scanner-output/
+.security-audit/gate-logs/

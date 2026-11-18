@@ -91,6 +91,8 @@ var result = await httpClient.GetFromJsonAsync<object>(
 | `GET /validate?email=` | Validate an email address |
 | `GET /health` | Health check |
 
+The port comes from the `PORT` environment variable (default `3000`). The container runs as a non-root user and has no rate limit, so put it behind your own gateway if you expose it publicly.
+
 ## Using in the Browser / Plain HTML
 
 Want to validate emails directly on a static website or in client-side HTML without running your own backend?
@@ -221,6 +223,19 @@ A role-based address belongs to a team or function, not a real person: `support@
 ## What are consumer domains?
 
 Consumer domains are personal email providers (Gmail, iCloud, ProtonMail, etc.) as opposed to company/custom domains. The package knows 120+ consumer domains across all major providers and their regional variants.
+
+## Development
+
+Uses [Bun](https://bun.sh) (version pinned in `package.json`).
+
+```bash
+bun install --frozen-lockfile
+bun run typecheck   # library + Cloudflare Pages Function
+bun run build       # compile to dist/
+bun run test        # offline unit tests
+```
+
+CI (`.github/workflows/ci.yml`) runs all of these plus `bun audit` on every pull request. Contributor and AI-agent conventions are in [AGENTS.md](AGENTS.md); the latest security review is in [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md).
 
 ## License
 
