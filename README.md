@@ -11,7 +11,7 @@ Fast, zero-dependency email validation for Node.js. No API keys. No rate limits 
 | Check | How |
 |---|---|
 | ✅ Syntax validation | RFC 5321/5322 compliant |
-| ✅ Domain existence | DNS A/CNAME lookup |
+| ✅ Domain existence | DNS A/AAAA (CNAMEs followed) or MX records; mail-only domains count |
 | ✅ MX record check | DNS MX lookup |
 | ✅ Disposable detection | 9,000+ domains, updated twice a week |
 | ✅ Provider fingerprinting | 10 providers + custom domain detection via MX/SPF |

@@ -1,6 +1,6 @@
 # checkemail
 
-> checkemail is a free, open-source (MIT) email validation engine by Sai Akash Neela (@saiakashneela). It checks RFC 5321/5322 syntax, DNS A/CNAME and MX records, matches 9,000+ disposable domains, detects role inboxes, canonicalizes aliases (Gmail dots, plus-addressing, pm.me), fingerprints the mail provider and returns a 0-100 confidence score. Zero runtime dependencies. Runs in Node.js 18+ and Bun (npm package `@isan3/checkemail`), as a Docker HTTP API (`saiakashneela/checkemail`), or directly in the browser.
+> checkemail is a free, open-source (MIT) email validation engine by Sai Akash Neela (@saiakashneela). It checks RFC 5321/5322 syntax, DNS A/AAAA and MX records, matches 9,000+ disposable domains, detects role inboxes, canonicalizes aliases (Gmail dots, plus-addressing, pm.me), fingerprints the mail provider and returns a 0-100 confidence score. Zero runtime dependencies. Runs in Node.js 18+ and Bun (npm package `@isan3/checkemail`), as a Docker HTTP API (`saiakashneela/checkemail`), or directly in the browser.
 
 Key facts:
 

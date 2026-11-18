@@ -76,8 +76,10 @@ export function createValidator({ resolver, lists }: ValidatorOptions): (email: 
             classify(email, resolver, lists)
         ]);
 
-        const domain_exists = existsResult.status === 'fulfilled' ? existsResult.value : false;
-        const mxData        = mxResult.status === 'fulfilled' ? mxResult.value : { hasMx: false, exchanges: [] as string[] };
+        const mxData        = mxResult.status === 'fulfilled' ? mxResult.value : { hasMx: false, hasRecords: false, exchanges: [] as string[] };
+        // A domain exists if it has an address (A/AAAA) or any MX record. Mail is delivered via MX
+        // (RFC 5321 section 5.1), so mail-only domains with no website (post.harvard.edu) are real.
+        const domain_exists = (existsResult.status === 'fulfilled' && existsResult.value) || mxData.hasRecords;
         const hasMx         = mxData.hasMx;
         const classification = cls.status === 'fulfilled' ? cls.value : {
             is_role_based: false, alias_status: 'MAYBE_NOT_ALIAS' as const,
