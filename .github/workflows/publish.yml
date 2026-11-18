@@ -20,17 +20,17 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
-          bun-version: latest
+          bun-version-file: package.json # packageManager field, same Bun as development
 
       - name: Setup Node.js (for npm publish)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
 
@@ -45,6 +45,9 @@ jobs:
             -o data/disposable.txt
           COUNT=$(wc -l < data/disposable.txt | tr -d ' ')
           echo "Loaded $COUNT domains."
+          # Refuse to ship a truncated or wrong file (the list has 10,000+ lines)
+          if [ "$COUNT" -lt 5000 ]; then echo "::error::Only $COUNT lines in disposable list, aborting"; exit 1; fi
+          if grep -qvE '^([a-z0-9.-]+|#.*)?$' data/disposable.txt; then echo "::error::Unexpected line in disposable list, aborting"; exit 1; fi
 
       - name: Bump patch version
         id: version
@@ -56,8 +59,15 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Typecheck
+        run: bun run typecheck
+
       - name: Build
         run: bun run build
+
+      # Nothing is committed, pushed or published unless the tests pass
+      - name: Test
+        run: bun run test
 
       - name: Commit updated list + version
         run: |
@@ -69,23 +79,25 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Publish to npm
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
-            NODE_AUTH_TOKEN="${{ secrets.NPM_TOKEN }}" npm publish --access public
+          if [ -n "$NPM_TOKEN" ]; then
+            NODE_AUTH_TOKEN="$NPM_TOKEN" npm publish --access public
           else
             npm publish --provenance --access public
           fi
 
       - name: Log in to Docker Hub
         if: env.DOCKER_USERNAME != ''
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build and push Docker image
         if: env.DOCKER_USERNAME != ''
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
         with:
           context: .
           file: ./docker/Dockerfile

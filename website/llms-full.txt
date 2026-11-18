@@ -140,7 +140,7 @@ The maximum is 90 (clean personal address). A confirmed alias on a personal addr
 curl "https://checkemail.dev/validate?email=john.doe%2Btest@gmail.com"
 ```
 
-Same endpoint and JSON as the Docker API, running as a Cloudflare Pages Function. No API key. CORS allows GET from any origin. Missing `email` returns HTTP 400. Addresses are not stored or logged. For bulk or high-volume checks, run the Docker image or the npm package yourself.
+Same endpoint and JSON as the Docker API, running as a Cloudflare Pages Function. No API key. CORS allows GET from any origin. Missing `email` returns HTTP 400. Addresses are not stored or logged. Rate limit: 100 requests per minute per IP; over that the endpoint returns HTTP 429 with a `Retry-After` header in seconds, and every response includes `RateLimit-Limit`, `RateLimit-Remaining` and `RateLimit-Reset` headers. For bulk or high-volume checks, run the Docker image or the npm package yourself.
 
 ## Docker HTTP API (any language)
 

@@ -1,0 +1,302 @@
+{
+  "project": "checkemail",
+  "audited_commit": "3dc0151",
+  "date": "2026-11-18",
+  "summary": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 3,
+    "info": 0
+  },
+  "findings": [
+    {
+      "id": "SEC-001",
+      "category": "security",
+      "title": "No rate limit on the free public /validate endpoint",
+      "severity": "medium",
+      "status": "fixed",
+      "cwe": "CWE-770",
+      "owasp": "A04:2021",
+      "locations": [
+        {
+          "file": "website/functions/validate.ts",
+          "line": 36
+        }
+      ],
+      "description": "The Cloudflare Pages Function validated any number of addresses per client. Each uncached check fans out to up to 8 DNS-over-HTTPS subrequests.",
+      "impact": "One client could burn the Pages Functions request quota (taking the free endpoint down for everyone), and use the endpoint as a free bulk validator or DoH amplifier.",
+      "remediation": "Fixed-window limit of 100 requests per minute per IP, keyed by CF-Connecting-IP (IPv6 /64) and checked before DNS work. It counts in memory per isolate plus in a counter shared across the data center via the Cache API, and fails open to the in-memory count. Responds 429 with Retry-After and RateLimit-* headers; memory is bounded.",
+      "fix_commit": "46d6547, 9ee7eb6, d02975e",
+      "test": "test/rate-limit.test.ts, test/validate-function.test.ts",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": "Optional: add a Cloudflare WAF rate-limiting rule on /validate for an exact global cap (the shared counter is per data center and not atomic)."
+    },
+    {
+      "id": "SEC-002",
+      "category": "security",
+      "title": "Static site sent no anti-framing, HSTS or Permissions-Policy headers",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": "CWE-1021",
+      "owasp": "A05:2021",
+      "locations": [
+        {
+          "file": "website/_headers",
+          "line": 1
+        }
+      ],
+      "description": "checkemail.dev could be embedded in a frame on any site; no HSTS or Permissions-Policy.",
+      "impact": "Clickjacking of the demo page; weaker transport guarantees.",
+      "remediation": "website/_headers adds HSTS, X-Frame-Options DENY, CSP frame-ancestors/object-src/base-uri/form-action, Permissions-Policy, nosniff.",
+      "fix_commit": "632e813",
+      "test": "Verified with wrangler pages dev (curl of /, /og.png, /nope)",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "SEC-003",
+      "category": "security",
+      "title": "Release workflow used mutable action tags, Bun 'latest' and an interpolated secret",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": "CWE-829",
+      "owasp": "A08:2021",
+      "locations": [
+        {
+          "file": ".github/workflows/publish.yml",
+          "line": 22
+        }
+      ],
+      "description": "The workflow that pushes to main and publishes to npm and Docker Hub ran actions by tag and the newest Bun, and expanded NPM_TOKEN inside the shell script.",
+      "impact": "A compromised or retagged action or Bun release would run with contents:write and id-token:write and could publish a malicious package.",
+      "remediation": "All actions pinned to commit SHAs, Bun pinned via packageManager, NPM_TOKEN passed through env.",
+      "fix_commit": "74bad5c",
+      "test": "CI steps run locally with Bun 1.3.13",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "SEC-004",
+      "category": "security",
+      "title": "Docker image ran the API as root",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": "CWE-250",
+      "owasp": "A05:2021",
+      "locations": [
+        {
+          "file": "docker/Dockerfile",
+          "line": 18
+        }
+      ],
+      "description": "No USER directive; the runtime stage also carried node_modules (TypeScript) it never used.",
+      "impact": "Any future RCE in the server or Bun would run as root inside the container.",
+      "remediation": "USER bun; runtime no longer copies node_modules (206 MB -> 174 MB); Dockerfile.dockerignore now applied.",
+      "fix_commit": "e899521",
+      "test": "Image built and smoke-tested (/health, /validate, whoami)",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "REL-001",
+      "category": "reliability",
+      "title": "Transient DNS failures cached as 'domain does not exist' for an hour",
+      "severity": "medium",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "src/resolver.ts",
+          "line": 17
+        }
+      ],
+      "description": "DoH timeouts/SERVFAIL surface as false / [] (not exceptions) and were cached for the full 1 h TTL.",
+      "impact": "After one network blip, a real domain was reported INVALID_DOMAIN or NO_MX_RECORDS (score 0) for an hour on that process or isolate.",
+      "remediation": "Negative answers cached for 60 s (new optional negativeTtlMs argument), positive answers still 1 h.",
+      "fix_commit": "a3e9f1a",
+      "test": "test/core.test.ts (withCache: negative answers expire sooner)",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "REL-002",
+      "category": "reliability",
+      "title": "Concurrent lookups of the same name were not shared",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "src/resolver.ts",
+          "line": 17
+        }
+      ],
+      "description": "checkMx and provider detection both query MX for the same domain at once; on a cold cache both went to the network.",
+      "impact": "Up to 2x DoH requests and slower cold checks.",
+      "remediation": "In-flight promises are shared per cache key.",
+      "fix_commit": "a3e9f1a, d02975e",
+      "test": "test/core.test.ts (concurrent lookups share one request)",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "REL-003",
+      "category": "reliability",
+      "title": "Releases were published without tests, CI, or a sanity check on the downloaded list",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": ".github/workflows/publish.yml",
+          "line": 36
+        }
+      ],
+      "description": "No test suite or PR CI existed; the scheduled job committed and published whatever upstream returned.",
+      "impact": "A broken build or an empty/garbled disposable list would ship to npm, Docker Hub and the site.",
+      "remediation": "Test suite added; CI on every PR; publish runs typecheck + tests before committing and rejects lists under 5,000 lines or with unexpected characters.",
+      "fix_commit": "74bad5c",
+      "test": ".github/workflows/ci.yml",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "SEO-001",
+      "category": "seo",
+      "title": "Unknown URLs returned the homepage with HTTP 200 (soft 404)",
+      "severity": "medium",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "website/404.html",
+          "line": 1
+        }
+      ],
+      "description": "With no 404.html, Cloudflare Pages serves index.html for every path.",
+      "impact": "Any typo or junk link becomes an indexable duplicate of the homepage.",
+      "remediation": "noindex 404.html; Pages now answers 404.",
+      "fix_commit": "334a556",
+      "test": "curl /nope -> 404 via wrangler pages dev",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "SEO-002",
+      "category": "seo",
+      "title": "Title (73 chars) and meta description (188 chars) truncated in results",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "website/index.html",
+          "line": 7
+        }
+      ],
+      "description": "Both exceeded what Google displays.",
+      "impact": "Truncated snippets.",
+      "remediation": "Title 58 chars, description 162 chars; sitemap lastmod updated.",
+      "fix_commit": "334a556",
+      "test": "check_seo.py 15/15 pass",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "SEO-003",
+      "category": "seo",
+      "title": "Render-blocking third-party CSS and a 145 KB icon font slowed first paint",
+      "severity": "medium",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "website/index.html",
+          "line": 34
+        }
+      ],
+      "description": "Three cross-origin stylesheets blocked rendering; the Phosphor icon font (all ~1,500 icons) was downloaded for 21 icons.",
+      "impact": "Slower FCP/LCP (Core Web Vitals) on mobile.",
+      "remediation": "21 icons inlined as CSS masks (3.4 KB gzipped); fonts load via preload/onload. FCP 716->284 ms, LCP 1064->672 ms, 335->184 KB, 0 render-blocking requests.",
+      "fix_commit": "7a6c9ec",
+      "test": "Playwright before/after: icon boxes, pixel diff, throttled timings",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "DOC-001",
+      "category": "docs",
+      "title": "No AGENTS.md / CLAUDE.md",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "AGENTS.md",
+          "line": 1
+        }
+      ],
+      "description": "Agents had no record of commands, conventions or security rules (rate limiting, privacy, browser-engine port).",
+      "impact": "Future changes could silently drop the rate limit or break the src/ <-> website parity.",
+      "remediation": "AGENTS.md as source of truth; CLAUDE.md imports it.",
+      "fix_commit": "ca796d6",
+      "test": "check_docs.py",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    },
+    {
+      "id": "DOC-002",
+      "category": "docs",
+      "title": "No .env.example; README had no development/test instructions or API limits",
+      "severity": "low",
+      "status": "fixed",
+      "cwe": null,
+      "owasp": null,
+      "locations": [
+        {
+          "file": "README.md",
+          "line": 1
+        }
+      ],
+      "description": "PORT undocumented outside the site; README claimed 'No rate limits' without scoping it to self-hosting.",
+      "impact": "Confusing for contributors and API users.",
+      "remediation": ".env.example, README Development section, hosted API limit documented in README, llms.txt, llms-full.txt and the site.",
+      "fix_commit": "ca796d6",
+      "test": "check_docs.py",
+      "requires_human_action": false,
+      "accepted_reason": null,
+      "accepted_by": null,
+      "human_action": null
+    }
+  ]
+}

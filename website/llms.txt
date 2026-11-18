@@ -5,7 +5,7 @@
 Key facts:
 
 - Install: `npm i @isan3/checkemail` or `bun add @isan3/checkemail`. Usage: `import { validateEmail } from '@isan3/checkemail'; await validateEmail('john.doe+test@gmail.com')`.
-- Free hosted API: `GET https://checkemail.dev/validate?email=` (no key, CORS open, same JSON as the npm package).
+- Free hosted API: `GET https://checkemail.dev/validate?email=` (no key, CORS open, same JSON as the npm package, 100 requests per minute per IP).
 - Docker: `docker run -p 3000:3000 saiakashneela/checkemail`, then `GET /validate?email=` and `GET /health`.
 - checkemail never sends SMTP probes. It proves the domain can receive mail, not that a specific mailbox exists.
 - Statuses: LIKELY, DISPOSABLE, INVALID_DOMAIN, NO_MX_RECORDS, INVALID_FORMAT. Anything other than LIKELY scores 0; a clean personal address scores 90.

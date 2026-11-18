@@ -19,8 +19,8 @@ FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-# Only copy what's needed to run
-COPY --from=builder /app/node_modules ./node_modules
+# Only copy what's needed to run. No node_modules: the package has zero runtime
+# dependencies (node_modules only holds the TypeScript compiler).
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/data ./data
 COPY --from=builder /app/docker ./docker
@@ -28,6 +28,9 @@ COPY package.json ./
 
 ENV PORT=3000
 EXPOSE 3000
+
+# Run as the image's unprivileged user, not root
+USER bun
 
 # Run the server directly with Bun (no compile step needed at runtime)
 CMD ["bun", "run", "docker/server.ts"]

@@ -14,6 +14,8 @@
   ],
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.website.json",
+    "test": "bun test",
     "serve": "bun run docker/server.ts",
     "prepublishOnly": "npm run build"
   },

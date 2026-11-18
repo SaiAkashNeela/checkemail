@@ -4,7 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@isan3/checkemail.svg)](https://www.npmjs.com/package/@isan3/checkemail)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Fast, zero-dependency email validation for Node.js. No API keys. No rate limits. Runs entirely offline (except DNS lookups).
+Fast, zero-dependency email validation for Node.js. No API keys. No rate limits when you run it yourself. Runs entirely offline (except DNS lookups).
 
 ## Features
 
@@ -45,6 +45,7 @@ curl "https://checkemail.dev/validate?email=john%2Btest@gmail.com"
 - Same JSON as the npm package and the Docker image
 - No API key, CORS open for `GET`
 - Addresses are not stored or logged
+- Fair use: **100 requests per minute per IP**. Over that you get HTTP `429` with a `Retry-After` header (seconds); every response carries `RateLimit-Limit`, `RateLimit-Remaining` and `RateLimit-Reset`
 - Runs as a Cloudflare Pages Function ([`website/functions/validate.ts`](website/functions/validate.ts))
 
 For bulk list cleaning or high volume, please run your own copy (npm or Docker below).
@@ -89,6 +90,8 @@ var result = await httpClient.GetFromJsonAsync<object>(
 |---|---|
 | `GET /validate?email=` | Validate an email address |
 | `GET /health` | Health check |
+
+The port comes from the `PORT` environment variable (default `3000`). The container runs as a non-root user and has no rate limit, so put it behind your own gateway if you expose it publicly.
 
 ## Using in the Browser / Plain HTML
 
@@ -220,6 +223,19 @@ A role-based address belongs to a team or function, not a real person: `support@
 ## What are consumer domains?
 
 Consumer domains are personal email providers (Gmail, iCloud, ProtonMail, etc.) as opposed to company/custom domains. The package knows 120+ consumer domains across all major providers and their regional variants.
+
+## Development
+
+Uses [Bun](https://bun.sh) (version pinned in `package.json`).
+
+```bash
+bun install --frozen-lockfile
+bun run typecheck   # library + Cloudflare Pages Function
+bun run build       # compile to dist/
+bun run test        # offline unit tests
+```
+
+CI (`.github/workflows/ci.yml`) runs all of these plus `bun audit` on every pull request. Contributor and AI-agent conventions are in [AGENTS.md](AGENTS.md); the latest security review is in [SECURITY_AUDIT_REPORT.md](SECURITY_AUDIT_REPORT.md).
 
 ## License
 
