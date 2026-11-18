@@ -544,7 +544,7 @@ var response = HttpClient.newHttpClient()
     .send(request, HttpResponse.BodyHandlers.ofString());
 System.out.println(response.body());</code></pre>
           <p class="note">Endpoints: <code>GET /validate?email=</code> and <code>GET /health</code>. Port set by <code>PORT</code> (default 3000), CORS open for GET. Try it with this page: <a href="?api=http://localhost:3000#demo">?api=http://localhost:3000</a></p>
-          <p class="note">No Docker? The same endpoint runs free at <code>https://checkemail.dev/validate?email=</code>. Swap the base URL and nothing else changes. Nothing is stored or logged. For bulk or high-volume checks, run your own copy.</p>
+          <p class="note">No Docker? The same endpoint runs free at <code>https://checkemail.dev/validate?email=</code>. Swap the base URL and nothing else changes. Nothing is stored or logged. Fair use is 100 requests per minute per IP (HTTP 429 with <code>Retry-After</code> above that). For bulk or high-volume checks, run your own copy.</p>
         </div>
 
         <div role="tabpanel" id="p-pages" aria-labelledby="t-pages" hidden>

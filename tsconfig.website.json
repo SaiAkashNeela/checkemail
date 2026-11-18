@@ -1,0 +1,12 @@
+{
+  // Type-checks the Cloudflare Pages Function and its helpers (not part of the npm build).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  "include": ["src", "website/functions", "website/lib"]
+}

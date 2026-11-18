@@ -4,7 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/@isan3/checkemail.svg)](https://www.npmjs.com/package/@isan3/checkemail)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Fast, zero-dependency email validation for Node.js. No API keys. No rate limits. Runs entirely offline (except DNS lookups).
+Fast, zero-dependency email validation for Node.js. No API keys. No rate limits when you run it yourself. Runs entirely offline (except DNS lookups).
 
 ## Features
 
@@ -45,6 +45,7 @@ curl "https://checkemail.dev/validate?email=john%2Btest@gmail.com"
 - Same JSON as the npm package and the Docker image
 - No API key, CORS open for `GET`
 - Addresses are not stored or logged
+- Fair use: **100 requests per minute per IP**. Over that you get HTTP `429` with a `Retry-After` header (seconds); every response carries `RateLimit-Limit`, `RateLimit-Remaining` and `RateLimit-Reset`
 - Runs as a Cloudflare Pages Function ([`website/functions/validate.ts`](website/functions/validate.ts))
 
 For bulk list cleaning or high volume, please run your own copy (npm or Docker below).
