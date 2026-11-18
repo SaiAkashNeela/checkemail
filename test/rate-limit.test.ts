@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { createRateLimiter, clientKey } from '../website/lib/rate-limit';
+import { createRateLimiter, clientKey } from '../website/functions/_lib/rate-limit';
 
 const req = (ip?: string) => new Request('https://checkemail.dev/validate', {
     headers: ip ? { 'CF-Connecting-IP': ip } : {},

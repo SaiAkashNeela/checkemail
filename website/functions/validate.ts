@@ -3,7 +3,7 @@
 // Nothing is stored or logged; the DNS cache below holds domains only, and the
 // rate limiter holds client IPs (in memory, for one minute) and nothing else.
 import { createValidator, dohResolver, withCache, parseList } from '../../src/edge';
-import { createRateLimiter, clientKey } from '../lib/rate-limit';
+import { createRateLimiter, clientKey } from './_lib/rate-limit';
 // Bundled as text at deploy time, so each deploy ships the list CI last committed
 import disposableTxt from '../../data/disposable.txt';
 import roleTxt from '../../data/role_based.txt';

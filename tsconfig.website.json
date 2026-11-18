@@ -8,5 +8,5 @@
     "declarationMap": false,
     "sourceMap": false
   },
-  "include": ["src", "website/functions", "website/lib"]
+  "include": ["src", "website/functions"]
 }
