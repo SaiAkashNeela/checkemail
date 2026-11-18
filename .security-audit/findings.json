@@ -26,13 +26,13 @@
       ],
       "description": "The Cloudflare Pages Function validated any number of addresses per client. Each uncached check fans out to up to 8 DNS-over-HTTPS subrequests.",
       "impact": "One client could burn the Pages Functions request quota (taking the free endpoint down for everyone), and use the endpoint as a free bulk validator or DoH amplifier.",
-      "remediation": "Fixed-window limiter, 100 requests per minute per IP keyed by CF-Connecting-IP (IPv6 /64), checked before DNS work; 429 + Retry-After + RateLimit-* headers; bounded memory.",
+      "remediation": "Fixed-window limit of 100 requests per minute per IP, keyed by CF-Connecting-IP (IPv6 /64) and checked before DNS work. It counts in memory per isolate plus in a counter shared across the data center via the Cache API, and fails open to the in-memory count. Responds 429 with Retry-After and RateLimit-* headers; memory is bounded.",
       "fix_commit": "46d6547, 9ee7eb6, d02975e",
       "test": "test/rate-limit.test.ts, test/validate-function.test.ts",
       "requires_human_action": false,
       "accepted_reason": null,
       "accepted_by": null,
-      "human_action": "Optional: add a Cloudflare WAF rate-limiting rule on /validate for a hard global cap (in-isolate counters are best effort)."
+      "human_action": "Optional: add a Cloudflare WAF rate-limiting rule on /validate for an exact global cap (the shared counter is per data center and not atomic)."
     },
     {
       "id": "SEC-002",

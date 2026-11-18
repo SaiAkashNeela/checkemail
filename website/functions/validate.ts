@@ -3,7 +3,7 @@
 // Nothing is stored or logged; the DNS cache below holds domains only, and the
 // rate limiter holds client IPs (in memory, for one minute) and nothing else.
 import { createValidator, dohResolver, withCache, parseList } from '../../src/edge';
-import { createRateLimiter, clientKey } from './_lib/rate-limit';
+import { createLimiter, clientKey, type CacheLike } from './_lib/rate-limit';
 // Bundled as text at deploy time, so each deploy ships the list CI last committed
 import disposableTxt from '../../data/disposable.txt';
 import roleTxt from '../../data/role_based.txt';
@@ -22,7 +22,13 @@ const validateEmail = createValidator({
 // 100 requests per minute per IP: generous for apps and people, blocks bulk abuse.
 const RATE_LIMIT = 100;
 const RATE_WINDOW_SECONDS = 60;
-const rateLimit = createRateLimiter({ limit: RATE_LIMIT, windowMs: RATE_WINDOW_SECONDS * 1000 });
+// In-memory per isolate + shared across the data center via the Cache API
+// (caches.default only exists on Cloudflare; elsewhere, e.g. tests, the in-memory limiter runs alone)
+const rateLimit = createLimiter({
+    limit: RATE_LIMIT,
+    windowMs: RATE_WINDOW_SECONDS * 1000,
+    cache: () => (globalThis as { caches?: { default?: CacheLike } }).caches?.default,
+});
 
 const HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -42,9 +48,9 @@ const json = (data: unknown, status = 200, extra: Record<string, string> = {}) =
 
 export const onRequestOptions = () => new Response(null, { status: 204, headers: HEADERS });
 
-export const onRequestGet = async ({ request }: { request: Request }) => {
+export const onRequestGet = async ({ request, waitUntil }: { request: Request; waitUntil?: (p: Promise<unknown>) => void }) => {
     // Checked before any DNS work, so blocked requests cost almost nothing
-    const rl = rateLimit(clientKey(request));
+    const rl = await rateLimit(clientKey(request), waitUntil);
     const rlHeaders: Record<string, string> = {
         'RateLimit-Limit': String(rl.limit),
         'RateLimit-Remaining': String(rl.remaining),

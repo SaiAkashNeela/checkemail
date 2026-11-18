@@ -54,6 +54,86 @@ export function createRateLimiter({ limit, windowMs, maxKeys = 10_000, now = Dat
     };
 }
 
+/** The subset of the Workers Cache API the shared counter needs. */
+export interface CacheLike {
+    match(key: string): Promise<Response | undefined>;
+    put(key: string, response: Response): Promise<void>;
+}
+
+type WaitUntil = (promise: Promise<unknown>) => void;
+
+/**
+ * Fixed-window counter shared by every isolate in a Cloudflare data center, stored with
+ * the Cache API (which is per data center). Pages spreads one client's requests over many
+ * isolates, so the in-memory limiter alone lets a client through far more than `limit`.
+ *
+ * Not atomic: requests that arrive at the same instant on different isolates can read the
+ * same count, so a parallel burst may slightly overshoot. Sequential traffic is counted
+ * exactly. Returns null (caller falls back to the in-memory limiter) if the cache is
+ * unavailable or errors, so the endpoint fails open rather than going down.
+ */
+export function createSharedCounter({ limit, windowMs, cache, now = Date.now }: {
+    limit: number;
+    windowMs: number;
+    cache: () => CacheLike | undefined;
+    now?: () => number;
+}) {
+    return async function count(key: string, waitUntil: WaitUntil): Promise<{ count: number; resetAt: number } | null> {
+        const store = cache();
+        if (!store) return null;
+        // Synthetic, non-routable URL: these entries can never be served to a visitor
+        const url = `https://rate-limit.invalid/v1/${encodeURIComponent(key)}`;
+        const t = now();
+        let state = { count: 0, resetAt: t + windowMs };
+        try {
+            const hit = await store.match(url);
+            if (hit) {
+                const saved = await hit.json() as { count?: unknown; resetAt?: unknown };
+                if (typeof saved.count === 'number' && typeof saved.resetAt === 'number' && saved.resetAt > t) {
+                    state = { count: saved.count, resetAt: saved.resetAt };
+                }
+            }
+        } catch {
+            return null;
+        }
+        if (state.count > limit) return state; // already blocked: nothing new to store
+        state.count++;
+        const ttl = Math.max(1, Math.ceil((state.resetAt - t) / 1000));
+        waitUntil(store.put(url, new Response(JSON.stringify(state), {
+            headers: { 'Content-Type': 'application/json', 'Cache-Control': `max-age=${ttl}` },
+        })).catch(() => {}));
+        return state;
+    };
+}
+
+/**
+ * Combined check: the in-memory limiter (exact within one isolate, also catches parallel
+ * bursts) plus the data-center-wide shared counter. A request is allowed only if both allow it.
+ */
+export function createLimiter({ limit, windowMs, cache, now = Date.now }: {
+    limit: number;
+    windowMs: number;
+    cache: () => CacheLike | undefined;
+    now?: () => number;
+}) {
+    const local = createRateLimiter({ limit, windowMs, now });
+    const shared = createSharedCounter({ limit, windowMs, cache, now });
+    return async function check(key: string, waitUntil: WaitUntil = p => { p.catch(() => {}); }): Promise<RateLimitResult> {
+        const l = local(key);
+        if (!l.allowed) return l;
+        const s = await shared(key, waitUntil);
+        if (!s) return l;
+        const allowed = s.count <= limit;
+        const sharedReset = Math.max(1, Math.ceil((s.resetAt - now()) / 1000));
+        return {
+            allowed,
+            limit,
+            remaining: Math.min(l.remaining, Math.max(0, limit - s.count)),
+            resetSeconds: allowed ? Math.min(l.resetSeconds, sharedReset) : sharedReset,
+        };
+    };
+}
+
 /** Expand an IPv6 address to 8 hextets, or null if it isn't one we can parse. */
 function ipv6Hextets(ip: string): string[] | null {
     const addr = ip.split('%')[0].toLowerCase();

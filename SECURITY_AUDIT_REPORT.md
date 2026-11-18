@@ -24,7 +24,7 @@ Plus 3 reliability (REL), 3 SEO and 2 documentation findings, all fixed (section
 
 ## 2. Open action items (human required)
 
-1. **Optional:** add a Cloudflare WAF rate-limiting rule on `/validate` (dashboard → Security → WAF → Rate limiting rules) if you want a hard global cap. The in-code limiter counts per Cloudflare isolate, so a client spread across several isolates can get somewhat more than 100/min (SEC-001).
+1. **Optional:** add a Cloudflare WAF rate-limiting rule on `/validate` (dashboard → Security → WAF → Rate limiting rules) if you want an exact global cap. The in-code limiter is shared per Cloudflare data center and is not atomic, so simultaneous parallel bursts can overshoot slightly (SEC-001).
 2. Make **"CI / test"** a required status check on `main` (Settings → Branches → branch protection or Rulesets → require status checks to pass, require branches to be up to date, block force pushes).
 3. After deploy: re-submit `https://checkemail.dev/sitemap.xml` in Google Search Console and Bing Webmaster Tools. Nothing in the social preview tags changed, so no re-scrape is needed.
 
@@ -34,7 +34,7 @@ Plus 3 reliability (REL), 3 SEO and 2 documentation findings, all fixed (section
 - **Entry points:** `GET /validate?email=` (Pages Function, public, unauthenticated) and `OPTIONS /validate`; the Docker API's `GET /validate` and `GET /health` (self-hosted); the npm `validateEmail()` function; the browser demo in `website/index.html` (calls DoH and GitHub directly; `?api=` points it at another API).
 - **Trust boundaries:** the `email` query string (attacker-controlled) → syntax regexes → DNS-over-HTTPS queries to Cloudflare/Google with the domain URL-encoded (fixed hosts, no SSRF). DNS answers are parsed as data only.
 - **Identity:** none. All endpoints are anonymous by design.
-- **Caching & rate limiting:** in-memory DNS cache per process/isolate (`withCache`, 10k entries). Before this audit: no rate limiting anywhere. Pages runs many isolates, so in-memory counters are per isolate.
+- **Caching & rate limiting:** in-memory DNS cache per process/isolate (`withCache`, 10k entries). Before this audit: no rate limiting anywhere. Pages runs many isolates, so in-memory counters alone are not enough (see SEC-001).
 - **Data:** email addresses in transit only; nothing is stored or logged; responses are `Cache-Control: no-store`.
 - **Deployment:** Cloudflare Pages (project root `website/`), npm and Docker Hub via `.github/workflows/publish.yml` (scheduled, pushes to `main`).
 
@@ -61,7 +61,7 @@ Phases 0–6 of the Ironclad process: recon, automated scanning, manual review o
 **Description** — The Pages Function validated as many addresses as a client sent. An uncached check makes up to 8 DoH subrequests.
 **Attack path** — Anonymous client → `GET /validate?email=<random>@<random-domain>` in a loop → Function invocations + DoH fan-out. No preconditions.
 **Impact** — Burns the Pages Functions daily request quota (the free endpoint goes down for everyone), offers free bulk validation the README asks people to self-host for, and turns the site into a DoH amplifier.
-**Remediation** — `website/functions/_lib/rate-limit.ts`: fixed window, **100 requests per 60 s per client**, keyed by `CF-Connecting-IP` (set by Cloudflare, not spoofable like `X-Forwarded-For`). IPv6 is grouped by /64 and IPv4-mapped IPv6 is keyed by the IPv4 address. It is checked before any DNS work. Responses carry `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` and `RateLimit-Policy: 100;w=60`. Over the limit: `429` with `Retry-After` and a JSON `error`/`retry_after`, CORS headers included so browser apps can read it. Memory is bounded at 10,000 tracked clients (expired windows are swept first). The window is fixed, as requested: generous, at the cost of allowing a burst at window edges. Counters are per isolate (documented in AGENTS.md; optional WAF rule above).
+**Remediation** — `website/functions/_lib/rate-limit.ts`: fixed window, **100 requests per 60 s per client**, keyed by `CF-Connecting-IP` (set by Cloudflare, not spoofable like `X-Forwarded-For`). IPv6 is grouped by /64 and IPv4-mapped IPv6 is keyed by the IPv4 address. It is checked before any DNS work. Responses carry `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` and `RateLimit-Policy: 100;w=60`. Over the limit: `429` with `Retry-After` and a JSON `error`/`retry_after`, CORS headers included so browser apps can read it. Memory is bounded at 10,000 tracked clients (expired windows are swept first). The window is fixed, as requested: generous, at the cost of allowing a burst at window edges. Testing the PR's preview deployment showed that Pages spreads one client's requests over many isolates, so in-memory counters alone did not enforce the limit. The limiter therefore also keeps a counter shared by every isolate in the data center through the Cache API. A client from one IP almost always reaches one data center. It fails open to the in-memory limiter, and its read-then-write isn't atomic, so simultaneous parallel requests can overshoot slightly. A WAF rule (above) gives an exact global cap.
 **Verification** — `test/rate-limit.test.ts`, `test/validate-function.test.ts` (100 OK then 429, `Retry-After`, per-IP isolation, spoofed `X-Forwarded-For` ignored, bounded memory). Commits `46d6547`, `9ee7eb6` (helper moved under `functions/_lib/` so Pages never serves it as a static file), `d02975e`.
 
 ### SEC-002 — Static site sent no anti-framing, HSTS or Permissions-Policy headers
@@ -129,7 +129,7 @@ DNS data is public and the same for every user, so there is no cross-user leak.
 **Rate-limit coverage**
 | Endpoint | Abuse risk | Limit before | Limit after | Store | Status |
 |---|---|---|---|---|---|
-| `GET /validate` (checkemail.dev) | quota exhaustion, bulk abuse, DoH fan-out | none | 100/min per IP (IPv6 /64) | memory, per isolate (+ optional WAF) | Fixed (SEC-001) |
+| `GET /validate` (checkemail.dev) | quota exhaustion, bulk abuse, DoH fan-out | none | 100/min per IP (IPv6 /64) | memory per isolate + Cache API per data center (+ optional WAF) | Fixed (SEC-001) |
 | `OPTIONS /validate` | negligible (static 204) | none | none | — | OK |
 | Docker `GET /validate` | operator's own infra | none | none (by design, documented) | — | OK: self-hosted for bulk use |
 
