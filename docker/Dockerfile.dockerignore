@@ -3,3 +3,6 @@ dist
 .git
 .gitignore
 *.md
+.security-audit
+test
+website
